@@ -1,0 +1,1 @@
+/Users/triluu/.wezterm.lua
