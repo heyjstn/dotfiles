@@ -1,0 +1,182 @@
+# Theovim
+
+## Time To Say Goodbye
+
+Theovim started when I took [CS252: Systems Programming](https://www.cs.purdue.edu/academic-programs/courses/canonical/cs252.html) in 2023, which required students to use command line text editors and debuggers to work on projects.
+[My freind](https://github.com/JonathanOppenheimer) saw me using the "VS Code in terminal" (I had very basic LSP functionalities set up) and asked me how to set up Neovim on his SSH account.
+I was just a baby Neovim user at the time, so I reluctantly shared my configuration into a separate private repository with him, which he named Theovim and shared with other people.
+Over time, I learned Lua, Neovim APIs, and Neovim ecosystem, and I started spending more time improving Neovim, often preferring building my own Lua function over using plugins.
+One of the first custom features I implemented for my Vim-illiterate friend was `:TheovimHelp` (272daff), a Lua function to open a markdown document in a floating window.
+The whole journey helped me use Neovim more.
+Neovim has been my only text editor for 2 years now, using it for coding, journaling, and everything in between.
+
+Recently, I noticed that I gravitate toward plain Vim, which also has the fully-featured LSP and fuzzy finder config but with more limited and simpler way.
+I may have overcomplicated my Neovim config with features I really do not use, making it harder to use and maintain.
+My love for Neovim is still the same, but I think it is a good time to go back to the basics.
+You can find much simpler Neovim config in [my dotfiles repository](https://github.com/theopn/dotfiles).
+
+## Overview
+
+![theovim-banner](./assets/theovim-banner.jpg)
+
+Theovim is my personal Neovim configuration, featuring a complete Telescope, Treesitter, and LSP setup, ~30 carefully selected plugins, and custom UI components in Lua.
+
+Theovim:
+
+0. prioritizes built-in Neovim features and Lua over plugins to avoid duplicate keybindings and features
+0. keeps the stock configuration as much as possible when using external plugins -- the plugin author knows more about the plugin than I do
+0. follows the [Open-closed Principle](https://en.wikipedia.org/wiki/Open-closed_principle) when organizing Lua configuration modules
+
+**For more information, read the [Highlights](#highlights) section and the built-in [help documentation](./doc/theovim.txt) using `:help theovim`.**
+
+## Prerequisites
+
+- A terminal emulator with true color support. A few recommendations:
+    - [Wezterm](https://wezfurlong.org/wezterm/) (my personal choice)
+    - [Kitty](https://sw.kovidgoyal.net/kitty/)
+    - [Alacritty](https://alacritty.org/)
+    - [iTerm 2 for MacOS](https://iterm2.com/)
+    - Alternatively, you can use a GUI Neovim client like [Neovide](https://neovide.dev/)
+- Preferably the latest Neovim
+- [NerdFonts](https://www.nerdfonts.com/font-downloads) to render glyphs
+- `make` and some C compiler to compile `telescope-fzf-native.nvim`
+- `npm`, `g++` (`gcc-c++`), and `unzip` for some LSP servers
+- `git` to update Theovim
+
+## Installation
+
+> [!NOTE]
+> I highly recommend you to fork this repository and tweak settings on your own.
+
+```bash
+# Optional backup
+[[ -e ~/.config/nvim ]] && mv ~/.config/nvim ~/.config/nvim.bak
+# Install Theovim files in ~/.config/nvim
+git clone --depth 1 https://github.com/theopn/theovim.git ~/.config/nvim
+```
+
+## Highlights
+
+- `:help theovim-tldr`: Summary of the Theovim help documentation
+
+### Initialization/Core
+
+Theovim creates a solid base Neovim experience by maximizing built-in features.
+The `init.lua` file initializes sensible default options, autocmds, and keybindings without external plugins or modules.
+
+- Automatically adjust indentation settings using [ftplugin](./after/ftplugin/)
+- Spell check in relevant buffers
+- Fold using Tree-sitter
+- Toggle-able floating terminal
+- Smarter window navigation
+
+For more information:
+
+- `:help theovim-init-options`
+- `:help theovim-init-keymaps`
+- `:help theovim-init-commands`
+- `:help theovim-init-autocmds`
+- `:help theovim-init-neo-tree`
+
+### Plugins
+
+Theovim provides ~30 carefully selected plugins managed by [lazy.nvim](https://github.com/folke/lazy.nvim).
+Here are some of the plugins that will make your life easier.
+
+- [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) is the main file explorer, replacing netrw and handling directory opens
+- [oil.nvim](https://github.com/stevearc/oil.nvim) is a file manager that lets you manage files like a Vim buffer
+- [nvim-autopairs](https://github.com/windwp/nvim-autopairs) automatically insert matching parentheses, quotes, etc.
+- [which-key.nvim](https://github.com/folke/which-key.nvim) displays a popup with all possible keybindings
+- [nvim-colorizer.lua](https://github.com/NvChad/nvim-colorizer.lua) highlight color codes (hex codes, ANSI color name such as "Magenta", CSS functions, etc.)
+- [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) highlights keywords such as `TODO`, `WARN`, etc.
+- [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) provides Git signs in the gutter (+, -, ~, etc.) as well as other useful Git functionalities, such as diff, navigating hunks, and blame tool
+- [Tokyo Night](https://github.com/folke/tokyonight.nvim) is a beautiful default theme for Theovim
+- [Markdown Preview](https://github.com/iamcco/markdown-preview.nvim) offers a real-time previewer for markdown files in your browser
+- [VimTeX](https://github.com/lervag/vimtex) is a LaTeX integration for Vim, providing syntax highlights and real-time compilation.
+
+For more information:
+
+- `:help theovim-plugins`
+
+### Telescope
+
+[Telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) is a fuzzy finder for Neovim.
+It allows you to jump between files, buffers, and anything you could think of in a matter of a few keystrokes.
+
+My Telescope configuration is heavily inspired by [Kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim),
+a configuration template written by TJ DeVries who is the author of Telescope.nvim and the core maintainer of Neovim.
+
+A few of my favorite Telescope features:
+
+- `:Telescope buffers` (`<leader><leader>`): lists all open buffers
+- `:Telescope oldfile` (`<leader>s.`): finds recently opened files
+- `:Telescope` (`<leader>ss`): searches Telescope functions using Telescope
+- `:Telescope find_files` (`<leader>sf`): searches files in the current and children directories
+- `:Telescope live_grep` (`<leader>sg`): searches for a word in the all the files in the current and children directories
+- `:Telescope git_commits` (`<leader>gc`): searches for Git commits
+
+For more information:
+
+- `:help theovim-telescope`
+
+### Treesitter
+
+Treesitter (TS) is an incremental parser generator for more accurate syntax highlighting compared to the default regex-based highlighting.
+TS also integrates with Vim's folding and selection mechanism to provide a more efficient navigation and editing experience.
+
+For more information:
+
+- `:help theovim-treesitter`
+
+### LSP
+
+Neovim's built-in LSP offers modern IDE features for any language you want (assuming one of the 350+ Neovim LSP servers supports the language you use) with flexible customizability and low resource usage.
+Like Telescope, my LSP configuration is heavily inspired by TJ's Kickstart.nvim.
+
+There are three main parts of LSP:
+
+- Diagnostics: error diagnostics and fix suggestions
+- LSP: hover documentation, formatting, refactoring, and much more
+- Completion: auto-completion for keywords, variables, templates (snippets), buffer words, and paths
+
+For more information:
+
+- `:help theovim-diagnostic`
+- `:help theovim-lsp`
+- `:help theovim-completion`
+
+### UI
+
+Theovim features unique UI components written in Lua.
+
+- Tabline: A simple and unique Tabline with buffer information to keep track of open buffers without sacrificing Vim's built-in tab system
+- Statusline: A simple and informative Statusline inspired by Mini.nvim (https://github.com/echasnovski/mini.nvim), featuring Git and LSP information
+- Dashboard: Startup dashboard with a random ASCII art that resemble my chunky cat Oliver
+
+For more information:
+
+- `:help theovim-ui`
+
+### References
+
+- Core:
+    - [Neovim source code repository](https://github.com/neovim/neovim/tree/master/runtime/ftplugin) or `$VIMRUNTIME/ftplugin/`: Ftplugin examples
+    - [A Reddit comment on "Share your favorite .vimrc lines..."](https://www.reddit.com/r/vim/comments/166a3ij/comment/jyivcnl/?utm_source=share&utm_medium=web2x&context=3): `SmarterWinMove` function
+    - [Floating toggle-able terminal in Neovim in 50 lines of Lua by TJ DeVries](https://www.youtube.com/watch?v=5PIiKDES_wc): toggle-able floating terminal
+    - [How I'm able to take notes in mathematics lectures using LaTeX and Vim](https://castel.dev/post/lecture-notes-1/#correcting-spelling-mistakes-on-the-fly): keybinding to fix the nearest spelling mistake
+- Telescope, Treesitter, and LSP:
+    - [Kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim): Telescope, Treesitter, and LSP config
+    - [nvim-cmp Wiki](https://github.com/hrsh7th/nvim-cmp/wiki/Menu-Appearance#basic-customisations): Completion icon config
+    - [nvim-lspconfig Wiki](https://github.com/neovim/nvim-lspconfig/wiki/UI-Customization#borders): Hover doc customization
+- UI:
+    - [NvChad UI plugin](https://github.com/NvChad/ui) and [Kodo](https://github.com/chadcat7/kodo/blob/4513340fb87146a3ed5fde55075b991b6eb550b5/lua/ui/dash/init.lua): Startup dashboard
+    - [nvim-tabline](https://github.com/crispgm/nvim-tabline): `setup()` function for Tabline
+    - [Custom Neovim Statusline by nuxsh](https://nuxsh.is-a.dev/blog/custom-nvim-statusline.html): Overall custom Statusline structure
+    - [Mini.statusline](https://github.com/echasnovski/mini.statusline): Statusline mode and Git functions
+- Tools:
+    - [Stuff.nvim](https://github.com/tamton-aquib/stuff.nvim): Notepad
+- Documentation:
+    - Built-in insert mode help documentation (`:h insert.txt`): Theovim help formatting
+    - [Tokyo Night Wallpapers](https://github.com/tokyo-night/wallpapers/blob/main/night/minimal/stripes_00_2560x1440.png): Wallpaper in the screenshot
+
+# justinvim
