@@ -16,7 +16,7 @@ if wezterm.config_builder then config = wezterm.config_builder() end
 -- Settings
 config.default_prog = { zsh_path, "-l" }
 
-config.color_scheme = "Tokyo Night"
+config.color_scheme = "rose-pine-moon"
 config.font = wezterm.font_with_fallback({
   -- { family = "JetbrainsMono Nerd Font Mono", scale = 1.2, weight = "Medium", },
   -- { family = "Google Sans Code", scale = 1.2, weight = "Medium"},
