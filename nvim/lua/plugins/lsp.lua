@@ -20,6 +20,9 @@ M.dependencies = {
 }
 
 M.config = function()
+  local lspconfig = require("lspconfig")
+  local util = require("lspconfig.util")
+
   -- Sets the LSP UI look
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
     vim.lsp.handlers.hover, {
@@ -112,13 +115,35 @@ M.config = function()
   -- Defines a list of servers and server-specific config
   local servers = {
     bashls = {},
-    clangd = {},
+    clangd = {
+      cmd = {
+        "clangd",
+        "--background-index",
+        "--clang-tidy",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+      },
+      root_dir = util.root_pattern(
+        ".clangd",
+        ".clang-tidy",
+        "compile_commands.json",
+        "compile_flags.txt",
+        ".git"
+      ),
+      single_file_support = true,
+    },
+    jdtls = {
+      root_dir = util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.sbt"),
+    },
+    metals = {
+      root_dir = util.root_pattern("build.sbt", "build.sc", "build.mill", "pom.xml", ".git"),
+    },
     pylsp = {},
     texlab = {},
     -- html = { filetypes = { "html", "twig", "hbs"} },
     gopls = {
       filetypes = {"go", "gomod", "gowork", "gotmpl"},
-      root_dir = require("lspconfig.util").root_pattern("go.mod", ".git"),
+      root_dir = util.root_pattern("go.mod", ".git"),
       settings = {
         gopls = {
           -- Enable auto imports
@@ -167,22 +192,25 @@ M.config = function()
     },
   }
 
-  -- Calls mason-lspconfig to
-  -- 1. ensure servers are installed
-  -- 2. Set up handlers for each server using the `server` table
+  -- Ensure Mason-backed servers are installed.
+  -- Some servers in `servers` (for example `metals`) are not provided by Mason
+  -- and must still be set up explicitly below.
   require("mason-lspconfig").setup({
-    ensure_installed = vim.tbl_keys(servers or {}),
-    -- Separate setup_handlers() function could be used for the same purpose.
-    -- Read |mason-lspconfig.setup_handlers()| for more information
-    handlers = {
-      function(server_name)
-        -- Uses default server config (`{}`) or server-specific config from `server` table
-        local server = servers[server_name] or {}
-        capabilities = capabilities
-        require("lspconfig")[server_name].setup(server)
-      end
-    }
+    ensure_installed = {
+      "bashls",
+      "clangd",
+      "gopls",
+      "jdtls",
+      "lua_ls",
+      "pylsp",
+      "texlab",
+    },
   })
+
+  for server_name, server in pairs(servers) do
+    server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+    lspconfig[server_name].setup(server)
+  end
 end
 
 return M
