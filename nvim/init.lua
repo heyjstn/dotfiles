@@ -78,6 +78,13 @@ opt.timeoutlen       = 300
 opt.winminwidth      = 3
 
 -- Others
+local undo_dir       = vim.fn.stdpath("state") .. "/undo"
+if vim.fn.isdirectory(undo_dir) == 0 then
+  vim.fn.mkdir(undo_dir, "p")
+end
+opt.undodir          = undo_dir
+opt.undofile         = true
+opt.sessionoptions:append({ "globals", "localoptions", "terminal" })
 opt.mouse            = "a"
 opt.confirm          = true --> Confirm before exiting with unsaved bufffer(s)
 -- }}}
@@ -287,13 +294,21 @@ local function update_leadmultispace()
   for _ = 1, vim.bo.shiftwidth - 1 do
     lead = lead .. " "
   end
-  vim.opt_local.listchars:append({ leadmultispace = lead })
+  local listchars = vim.opt_global.listchars:get()
+  listchars.leadmultispace = lead
+  vim.opt_local.listchars = listchars
 end
 
 -- When `shiftwidth` was manually changed
 vim.api.nvim_create_autocmd("OptionSet", {
   group = update_leadmultispace_group,
-  pattern = { "shiftwidth", "filetype" },
+  pattern = { "shiftwidth" },
+  callback = update_leadmultispace,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = update_leadmultispace_group,
+  pattern = "*",
   callback = update_leadmultispace,
 })
 
@@ -302,7 +317,6 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = update_leadmultispace_group,
   pattern = "*",
   callback = update_leadmultispace,
-  once = true,
 })
 -- }}}
 
@@ -312,6 +326,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 vim.diagnostic.config({
   float = {
     border = "rounded",
+    source = "if_many",
     format = function(diagnostic)
       -- "ERROR (line n): message"
       return string.format("%s (line %i): %s",
@@ -320,10 +335,18 @@ vim.diagnostic.config({
         diagnostic.message)
     end
   },
+  severity_sort = true,
   update_in_insert = false,
+  virtual_text = {
+    spacing = 2,
+    source = "if_many",
+  },
 })
 
 -- Keymaps
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 -- }}}
 

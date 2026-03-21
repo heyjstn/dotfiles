@@ -8,6 +8,66 @@ local wezterm = require("wezterm")
 local act = wezterm.action
 
 local zsh_path = "/bin/zsh"
+local direction_keys = {
+  h = "Left",
+  j = "Down",
+  k = "Up",
+  l = "Right",
+  Left = "Left",
+  Down = "Down",
+  Up = "Up",
+  Right = "Right",
+}
+
+local function basename(s)
+  return string.gsub(s, "(.*[/\\])(.*)", "%2")
+end
+
+local function cwd_to_path(cwd)
+  if not cwd then
+    return wezterm.home_dir
+  end
+  if type(cwd) == "userdata" then
+    return cwd.file_path
+  end
+  return cwd
+end
+
+local function workspace_name_from_cwd(cwd)
+  local path = cwd_to_path(cwd)
+  local name = basename(path)
+  return name ~= "" and name or "main"
+end
+
+local function is_nvim(pane)
+  local user_vars = pane:get_user_vars() or {}
+  if user_vars.IS_NVIM == "true" then
+    return true
+  end
+
+  local process_name = pane:get_foreground_process_name()
+  return process_name and process_name:match("n?vim") ~= nil
+end
+
+local function split_nav(mode, key)
+  local direction = direction_keys[key]
+  return {
+    key = key,
+    mods = "META",
+    action = wezterm.action_callback(function(window, pane)
+      if is_nvim(pane) then
+        window:perform_action(act.SendKey { key = key, mods = "ALT" }, pane)
+        return
+      end
+
+      if mode == "resize" then
+        window:perform_action(act.AdjustPaneSize { direction, 3 }, pane)
+      else
+        window:perform_action(act.ActivatePaneDirection(direction), pane)
+      end
+    end),
+  }
+end
 
 local config = {}
 -- Use config builder object if possible
@@ -18,12 +78,10 @@ config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme = "rose-pine-moon"
 config.font = wezterm.font_with_fallback({
-  -- { family = "JetbrainsMono Nerd Font Mono", scale = 1.2, weight = "Medium", },
-  -- { family = "Google Sans Code", scale = 1.2, weight = "Medium"},
-  -- { family = "IBM Plex Mono", scale = 1.0, weight = "Medium"},
-  -- { family = "FiraMono Nerd Font Mono", scale = 1.2, weight = "Medium"},
-  -- { family = "Iosevka Nerd Font",       scale = 1.2, weight = "Medium", },
-  -- { family = "FantasqueSansM Nerd Font", scale = 1.3, },
+  { family = "JetBrainsMono Nerd Font", weight = "Medium" },
+  { family = "IosevkaTerm Nerd Font", weight = "Medium" },
+  { family = "Symbols Nerd Font Mono" },
+  { family = "Menlo" },
 })
 
 local opacity = 0.95
@@ -32,6 +90,11 @@ config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
 config.default_workspace = "main"
+config.launch_menu = {
+  { label = "Home", cwd = wezterm.home_dir, args = { zsh_path, "-l" } },
+  { label = "Dotfiles", cwd = wezterm.home_dir .. "/dotfiles", args = { zsh_path, "-l" } },
+  { label = "Neovim Config", cwd = wezterm.home_dir .. "/dotfiles/nvim", args = { zsh_path, "-l" } },
+}
 config.macos_window_background_blur=50
 
 -- Dim inactive panes
@@ -47,6 +110,8 @@ config.keys = {
   { key = "a",          mods = "LEADER|CTRL", action = act.SendKey { key = "a", mods = "CTRL" } },
   { key = "c",          mods = "LEADER",      action = act.ActivateCopyMode },
   { key = "phys:Space", mods = "LEADER",      action = act.ActivateCommandPalette },
+  { key = "f",          mods = "LEADER",      action = act.QuickSelect },
+  { key = "/",          mods = "LEADER",      action = act.Search("CurrentSelectionOrEmptyString") },
 
   -- Pane keybindings
   { key = "s",          mods = "LEADER",      action = act.SplitVertical { domain = "CurrentPaneDomain" } },
@@ -90,8 +155,46 @@ config.keys = {
   { key = "}", mods = "LEADER|SHIFT", action = act.MoveTabRelative(1) },
 
   -- Lastly, workspace
-  { key = "w", mods = "LEADER",       action = act.ShowLauncherArgs { flags = "FUZZY|WORKSPACES" } },
+  { key = "w", mods = "LEADER",       action = act.ShowLauncherArgs { flags = "FUZZY|WORKSPACES|LAUNCH_MENU_ITEMS" } },
+  {
+    key = "p",
+    mods = "LEADER",
+    action = wezterm.action_callback(function(window, pane)
+      local cwd = cwd_to_path(pane:get_current_working_dir())
+      window:perform_action(act.SwitchToWorkspace {
+        name = workspace_name_from_cwd(cwd),
+        spawn = { cwd = cwd },
+      }, pane)
+    end),
+  },
+  {
+    key = "P",
+    mods = "LEADER|SHIFT",
+    action = act.PromptInputLine {
+      description = wezterm.format({
+        { Attribute = { Intensity = "Bold" } },
+        { Foreground = { AnsiColor = "Teal" } },
+        { Text = "Workspace name (blank uses current directory):" },
+      }),
+      action = wezterm.action_callback(function(window, pane, line)
+        local cwd = cwd_to_path(pane:get_current_working_dir())
+        local name = (line and line ~= "") and line or workspace_name_from_cwd(cwd)
+        window:perform_action(act.SwitchToWorkspace {
+          name = name,
+          spawn = { cwd = cwd },
+        }, pane)
+      end),
+    }
+  },
 
+  split_nav("move", "h"),
+  split_nav("move", "j"),
+  split_nav("move", "k"),
+  split_nav("move", "l"),
+  split_nav("resize", "Left"),
+  split_nav("resize", "Down"),
+  split_nav("resize", "Up"),
+  split_nav("resize", "Right"),
 }
 -- I can use the tab navigator (LDR t), but I also want to quickly navigate tabs with index
 for i = 1, 9 do
@@ -146,11 +249,6 @@ wezterm.on("update-status", function(window, pane)
   if window:leader_is_active() then
     stat = "LDR"
     stat_color = "#bb9af7"
-  end
-
-  local basename = function(s)
-    -- Nothing a little regex can't fix
-    return string.gsub(s, "(.*[/\\])(.*)", "%2")
   end
 
   -- Current working directory

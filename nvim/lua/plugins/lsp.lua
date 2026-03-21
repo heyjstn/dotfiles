@@ -47,23 +47,27 @@ M.config = function()
         vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
       end
 
-      -- Creates a keybinding to format code
-      map("<leader>F", vim.lsp.buf.format, "[F]ormat buffer")
-
       -- Sets the default values for LSP functions with Telescope counterparts
       local status, builtin = pcall(require, "telescope.builtin")
       local telescope_opt = { jump_type = "tab" } --> spawns selection in a new tab
+      local telescope_or = function(picker, fallback, opts)
+        if status and builtin[picker] then
+          return function() builtin[picker](opts or {}) end
+        end
+        return fallback
+      end
       -- Sets the navigation keymaps
-      map("gd", status and function() builtin.lsp_definitions(telescope_opt) end or vim.lsp.buf.definition,
+      map("gd", telescope_or("lsp_definitions", vim.lsp.buf.definition, telescope_opt),
         "[G]oto [D]efinition")
-      map("gr", builtin.lsp_references or vim.lsp.buf.references, "[G]oto [R]eferences")
-      map("gI", builtin.lsp_implementations or vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+      map("gr", telescope_or("lsp_references", vim.lsp.buf.references), "[G]oto [R]eferences")
+      map("gI", telescope_or("lsp_implementations", vim.lsp.buf.implementation), "[G]oto [I]mplementation")
       map("<leader>D",
-        status and function() builtin.lsp_type_definitions(telescope_opt) end or vim.lsp.buf.type_definition,
+        telescope_or("lsp_type_definitions", vim.lsp.buf.type_definition, telescope_opt),
         "Type [D]efinition")
       -- Sets the symbol keymaps
-      map("<leader>ds", builtin.lsp_document_symbols or vim.lsp.buf.document_symbol, "[D]ocument [S]ymbols")
-      map("<leader>ws", builtin.lsp_dynamic_workspace_symbols or vim.lsp.buf.workspace_symbol, "[W]orkspace [S]ymbols")
+      map("<leader>ds", telescope_or("lsp_document_symbols", vim.lsp.buf.document_symbol), "[D]ocument [S]ymbols")
+      map("<leader>ws", telescope_or("lsp_dynamic_workspace_symbols", vim.lsp.buf.workspace_symbol),
+        "[W]orkspace [S]ymbols")
 
       -- Sets the functiosn with no Telescope counterparts
       map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
@@ -131,9 +135,6 @@ M.config = function()
         ".git"
       ),
       single_file_support = true,
-    },
-    jdtls = {
-      root_dir = util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle", "build.sbt"),
     },
     metals = {
       root_dir = util.root_pattern("build.sbt", "build.sc", "build.mill", "pom.xml", ".git"),

@@ -2,8 +2,8 @@
 
 This repository contains two main user-facing configurations:
 
-- [`.wezterm.lua`](.wezterm.lua): terminal workflow, panes, tabs, and workspaces.
-- [`nvim/`](nvim): Neovim editor, plugins, keymaps, LSP, search, and UI.
+- [`.wezterm.lua`](.wezterm.lua): terminal workflow, panes, tabs, workspaces, quick-select, and project launch helpers.
+- [`nvim/`](nvim): Neovim editor, plugins, diagnostics, formatting, debugging, testing, and custom UI.
 
 Both are currently themed with Rose Pine Moon.
 
@@ -14,6 +14,7 @@ Both are currently themed with Rose Pine Moon.
 ├── .wezterm.lua
 └── nvim
     ├── init.lua
+    ├── lazy-lock.json
     ├── lua
     │   ├── plugins
     │   └── ui
@@ -26,20 +27,22 @@ Both are currently themed with Rose Pine Moon.
 
 ### What this WezTerm config does
 
-The WezTerm setup is defined in [`.wezterm.lua`](.wezterm.lua). It is configured around a tmux-like leader workflow:
+The WezTerm setup is defined in [`.wezterm.lua`](.wezterm.lua). It is built around a tmux-like leader workflow and a second set of Meta-based pane controls that pair well with Neovim.
 
-- Shell: starts `zsh` as a login shell.
-- Theme: `rose-pine-moon`.
+Key defaults:
+
+- Shell: `zsh -l`
+- Theme: `rose-pine-moon`
+- Font fallback: JetBrains Mono Nerd Font, IosevkaTerm Nerd Font, Symbols Nerd Font Mono, Menlo
 - Window style:
   - 95% background opacity
   - macOS blur enabled
   - resize-only window decorations
   - close confirmation prompt enabled
-- Navigation:
-  - leader-based pane and tab control
-  - workspaces enabled
-  - custom status bar on the left and right
-- Inactive panes are dimmed to make the active pane clearer.
+- Status bar:
+  - left: workspace / key table / leader state
+  - right: cwd, foreground process, current time
+- Inactive panes are dimmed for focus.
 
 ### Leader key
 
@@ -47,15 +50,9 @@ The WezTerm leader key is `Ctrl+a`.
 
 Press `Ctrl+a`, then press a second key within 1000 ms to trigger a command.
 
-Examples:
-
-- `Ctrl+a`, then `s`: split vertically
-- `Ctrl+a`, then `v`: split horizontally
-- `Ctrl+a`, then `t`: open a new tab
-
 ### Pane management
 
-Pane navigation and layout are the core of this config.
+Leader-based pane controls:
 
 | Key | Action |
 | --- | --- |
@@ -70,21 +67,32 @@ Pane navigation and layout are the core of this config.
 | `Ctrl+a`, `o` | Rotate panes clockwise |
 | `Ctrl+a`, `r` | Enter pane resize mode |
 
-#### Resize mode
+Resize mode:
 
-After pressing `Ctrl+a`, `r`, the terminal enters a key table for pane resizing.
+| Key | Action |
+| --- | --- |
+| `h` | Shrink left |
+| `j` | Shrink down |
+| `k` | Shrink up |
+| `l` | Shrink right |
+| `Esc` or `Enter` | Exit resize mode |
 
-Use:
+Meta-based pane controls:
 
-- `h`: shrink left
-- `j`: shrink down
-- `k`: shrink up
-- `l`: shrink right
-- `Esc` or `Enter`: exit resize mode
+| Key | Action |
+| --- | --- |
+| `Alt+h` | Move left across WezTerm panes or hand off to Neovim |
+| `Alt+j` | Move down across WezTerm panes or hand off to Neovim |
+| `Alt+k` | Move up across WezTerm panes or hand off to Neovim |
+| `Alt+l` | Move right across WezTerm panes or hand off to Neovim |
+| `Alt+Left` | Resize pane left |
+| `Alt+Down` | Resize pane down |
+| `Alt+Up` | Resize pane up |
+| `Alt+Right` | Resize pane right |
+
+The Meta bindings are the terminal-side half of the Neovim/WezTerm pane workflow.
 
 ### Tab management
-
-Tabs are managed with leader shortcuts.
 
 | Key | Action |
 | --- | --- |
@@ -98,76 +106,63 @@ Tabs are managed with leader shortcuts.
 | `Ctrl+a`, `Shift+}` | Move tab right |
 | `Ctrl+a`, `1` to `9` | Jump directly to tab 1 through 9 |
 
-#### Tab move mode
-
-After pressing `Ctrl+a`, `m`:
-
-- `h` or `j`: move tab left
-- `k` or `l`: move tab right
-- `Esc` or `Enter`: exit tab move mode
-
-### Workspaces
-
-This config enables WezTerm workspaces and sets the default workspace to `main`.
+Tab move mode:
 
 | Key | Action |
 | --- | --- |
-| `Ctrl+a`, `w` | Open the workspace launcher |
+| `h` or `j` | Move tab left |
+| `k` or `l` | Move tab right |
+| `Esc` or `Enter` | Exit tab move mode |
 
-Use workspaces when you want separate terminal contexts for different projects or tasks without mixing panes and tabs into one giant window state.
+### Workspaces and project launch
 
-### Copy mode and command palette
+This config keeps `main` as the default workspace and adds project-focused workspace helpers.
+
+| Key | Action |
+| --- | --- |
+| `Ctrl+a`, `w` | Open the fuzzy launcher for workspaces and launch-menu items |
+| `Ctrl+a`, `p` | Switch to or create a workspace named after the current pane cwd |
+| `Ctrl+a`, `Shift+p` | Prompt for a workspace name using the current pane cwd |
+
+The launch menu also exposes a few common starting points:
+
+- `Home`
+- `Dotfiles`
+- `Neovim Config`
+
+### Quick select, search, and command palette
 
 | Key | Action |
 | --- | --- |
 | `Ctrl+a`, `c` | Activate copy mode |
-| `Ctrl+a`, `Space` | Open command palette |
+| `Ctrl+a`, `f` | Enter quick-select mode for paths, hashes, URLs, and other detected tokens |
+| `Ctrl+a`, `/` | Search scrollback using the current selection if present |
+| `Ctrl+a`, `Space` | Open the command palette |
 
 ### Status bar
 
-This config updates status once per second and shows different data on the left and right sides.
+The status bar updates once per second.
 
 Left status:
 
-- Current workspace name
-- Current key table name when a special mode is active
+- current workspace name
+- current key table name when a special mode is active
 - `LDR` when the leader key is active
 
 Right status:
 
-- Current working directory of the active pane
-- Foreground process name
-- Current time
-
-This means you can tell at a glance:
-
-- where the active shell is
-- what command is running
-- whether you are in a resize or move mode
-
-### Appearance notes
-
-Important UI settings:
-
-- fancy tab bar is disabled
-- tab bar stays at the top
-- background opacity changes slightly when the window loses focus
-- inactive panes are desaturated and dimmed
+- current working directory of the active pane
+- foreground process name
+- current time
 
 ### Practical WezTerm workflow
 
-A typical session might look like this:
-
 1. Open WezTerm.
-2. Use `Ctrl+a`, `w` to pick or create a workspace.
-3. Split panes with `Ctrl+a`, `s` and `Ctrl+a`, `v`.
-4. Move around with `Ctrl+a`, `h/j/k/l`.
-5. Open more tabs with `Ctrl+a`, `t`.
-6. Rename a tab with `Ctrl+a`, `e` when a tab gets a specific role such as `server`, `tests`, or `git`.
-
-### Reloading WezTerm config
-
-If WezTerm is installed normally, you can reload the config from WezTerm itself through the command palette or by restarting the app. The config file to edit is [`.wezterm.lua`](.wezterm.lua).
+2. Use `Ctrl+a`, `w` to jump to an existing workspace or launch-menu entry.
+3. Use `Ctrl+a`, `p` from any project shell to break that cwd into its own workspace.
+4. Split panes with `Ctrl+a`, `s` and `Ctrl+a`, `v`.
+5. Use `Alt+h/j/k/l` for fast pane movement, especially when hopping between terminal panes and Neovim.
+6. Use `Ctrl+a`, `f` to quick-select a path, commit hash, or URL from scrollback.
 
 ## Neovim Guide
 
@@ -180,31 +175,17 @@ This configuration focuses on:
 - keyboard-driven navigation
 - built-in LSP with Mason-managed servers
 - Telescope-powered search
-- persistent terminal workflows
-- a custom statusline, tabline, and startup dashboard
-- Treesitter highlighting and selection
-- filetype-specific editing helpers
+- persistent undo and session restore
+- automatic formatting and on-demand linting
+- DAP-based debugging
+- test execution in embedded terminal splits
+- custom statusline, tabline, and startup dashboard
 
 ### Theme
 
-Neovim uses Rose Pine Moon through [ `nvim/lua/plugins/rose-pine.lua` ](nvim/lua/plugins/rose-pine.lua).
+Neovim uses Rose Pine Moon through [`nvim/lua/plugins/rose-pine.lua`](nvim/lua/plugins/rose-pine.lua).
 
 Transparency is enabled, so floating windows and editor surfaces keep a translucent look when your terminal supports it.
-
-### Leader key
-
-The Neovim leader key is `Space`.
-
-When this README says `<leader>x`, read it as:
-
-- press `Space`
-- then press `x`
-
-Examples:
-
-- `<leader>n`: toggle file explorer
-- `<leader>sf`: find files
-- `<leader>tt`: open the floating terminal
 
 ### Core editor behavior
 
@@ -221,6 +202,8 @@ Out of the box, this config changes several defaults:
 - special whitespace characters are shown
 - mouse support is enabled
 - unsaved changes trigger confirmation prompts
+- persistent undo is enabled and stored under Neovim state
+- sessions can restore buffers, tabs, terminals, folds, and local options
 
 Movement and search refinements:
 
@@ -252,7 +235,7 @@ The statusline shows:
 - current mode
 - current file name
 - modified and read-only markers
-- diagnostics
+- diagnostics with corrected severity labels
 - Git branch and change summary
 - filetype, file format, encoding
 - cursor position
@@ -286,11 +269,6 @@ The tabline shows:
 | `<leader>p` | Normal | Show registers and prepare `:normal "` for manual register paste |
 | `<leader>p` | Visual | Replace selection without overwriting the unnamed register |
 
-Notes:
-
-- Normal-mode `<leader>p` is a register picker helper, not a direct paste command.
-- After pressing it, choose a register and a put command manually, such as `+p`.
-
 #### Buffer navigation
 
 | Key | Action |
@@ -300,9 +278,9 @@ Notes:
 | `<leader>b` | Show buffer list and prepare `:b` |
 | `<leader>k` | Show buffer list and prepare `:bdelete` |
 
-#### Window navigation and auto-splitting
+#### Window and pane navigation
 
-This config overloads directional window movement so that moving into a missing window creates the split automatically.
+Built-in split creation:
 
 | Key | Action |
 | --- | --- |
@@ -311,7 +289,20 @@ This config overloads directional window movement so that moving into a missing 
 | `Ctrl+k` | Move up, or create a horizontal split if needed |
 | `Ctrl+l` | Move right, or create a vertical split if needed |
 
-#### Window resizing
+Neovim and WezTerm pane handoff:
+
+| Key | Action |
+| --- | --- |
+| `Alt+h` | Move left across Neovim splits and WezTerm panes |
+| `Alt+j` | Move down across Neovim splits and WezTerm panes |
+| `Alt+k` | Move up across Neovim splits and WezTerm panes |
+| `Alt+l` | Move right across Neovim splits and WezTerm panes |
+| `Alt+Left` | Resize pane left |
+| `Alt+Down` | Resize pane down |
+| `Alt+Up` | Resize pane up |
+| `Alt+Right` | Resize pane right |
+
+Classic Vim window resizing:
 
 | Key | Action |
 | --- | --- |
@@ -354,9 +345,7 @@ The core config defines these custom commands:
 | `:CD` | Set local working directory to the current file's directory |
 | `:Floaterminal` | Toggle the reusable floating terminal |
 
-Additional filetype-specific commands are defined later in this README.
-
-### File explorer and file browsing
+### File explorer and search
 
 #### Neo-tree
 
@@ -366,7 +355,7 @@ Configured in [`nvim/lua/plugins/neo-tree.lua`](nvim/lua/plugins/neo-tree.lua).
 | --- | --- |
 | `<leader>n` | Toggle Neo-tree and reveal current file |
 
-Neo-tree behavior in this setup:
+Neo-tree behavior:
 
 - appears on the left
 - width is set to 32 columns
@@ -375,17 +364,11 @@ Neo-tree behavior in this setup:
 - Git-ignored files are visible
 - closes if it becomes the last window
 
-#### Telescope file browser
-
-| Key | Action |
-| --- | --- |
-| `<leader>fb` | Open Telescope file browser |
-
-### Search and navigation with Telescope
+#### Telescope
 
 Configured in [`nvim/lua/plugins/telescope.lua`](nvim/lua/plugins/telescope.lua).
 
-#### Search shortcuts
+Search shortcuts:
 
 | Key | Action |
 | --- | --- |
@@ -402,8 +385,9 @@ Configured in [`nvim/lua/plugins/telescope.lua`](nvim/lua/plugins/telescope.lua)
 | `<leader>/` | Fuzzy search within current buffer |
 | `<leader>s/` | Live grep only in open files |
 | `<leader>sn` | Search Neovim config files |
+| `<leader>fb` | Open Telescope file browser |
 
-#### Git-related Telescope shortcuts
+Git-related Telescope shortcuts:
 
 | Key | Action |
 | --- | --- |
@@ -411,40 +395,42 @@ Configured in [`nvim/lua/plugins/telescope.lua`](nvim/lua/plugins/telescope.lua)
 | `<leader>gc` | Search Git commits |
 | `<leader>gs` | Search Git status |
 
-#### Telescope picker controls
+### LSP, diagnostics, formatting, and linting
 
-Inside Telescope insert mode:
+Configured in:
 
-| Key | Action |
-| --- | --- |
-| `Ctrl+j` | Move selection down |
-| `Ctrl+k` | Move selection up |
-
-### LSP and code navigation
-
-Configured in [`nvim/lua/plugins/lsp.lua`](nvim/lua/plugins/lsp.lua).
+- [`nvim/lua/plugins/lsp.lua`](nvim/lua/plugins/lsp.lua)
+- [`nvim/lua/plugins/conform.lua`](nvim/lua/plugins/conform.lua)
+- [`nvim/lua/plugins/lint.lua`](nvim/lua/plugins/lint.lua)
 
 This setup uses:
 
 - `mason.nvim` for LSP server installation
 - `mason-lspconfig.nvim` for bridging Mason and `lspconfig`
 - `fidget.nvim` for LSP status feedback
-- `lazydev.nvim` for better Lua/Neovim development
+- `conform.nvim` for formatting and format-on-save
+- `nvim-lint` for on-demand and post-save linting when external linters are available
 
-#### Installed/managed language servers
-
-The config ensures these servers are installed:
+Managed language servers:
 
 - `bashls`
 - `clangd`
+- `gopls`
+- `jdtls`
+- `lua_ls`
 - `pylsp`
 - `texlab`
-- `gopls`
-- `lua_ls`
 
-#### LSP keymaps
+Diagnostics:
 
-These keymaps are attached when an LSP client connects to a buffer.
+| Key | Action |
+| --- | --- |
+| `[d` | Previous diagnostic |
+| `]d` | Next diagnostic |
+| `<leader>e` | Open diagnostic float |
+| `<leader>q` | Populate the location list with diagnostics |
+
+LSP keymaps:
 
 | Key | Action |
 | --- | --- |
@@ -457,14 +443,104 @@ These keymaps are attached when an LSP client connects to a buffer.
 | `<leader>ws` | Search workspace symbols |
 | `<leader>rn` | Rename symbol |
 | `<leader>ca` | Code action |
-| `<leader>F` | Format current buffer |
 | `<leader>th` | Toggle inlay hints when supported |
 
-Notes:
+Formatting:
 
-- Definitions and type definitions prefer Telescope when available.
-- Definitions are configured to open results in a new tab.
-- Hover and signature help use rounded borders.
+| Key | Action |
+| --- | --- |
+| `<leader>F` | Format current buffer |
+| `<leader>cf` | Format current buffer through the code group |
+
+Formatting runs automatically on save with LSP fallback when no external formatter is configured.
+
+Linting:
+
+| Key | Action |
+| --- | --- |
+| `<leader>cl` | Run lint for the current buffer when a configured linter is available |
+
+Configured external linters:
+
+- `shellcheck` for shell buffers
+- `ruff` for Python
+- `luacheck` for Lua
+- `markdownlint` for Markdown
+
+### Debugging
+
+Configured in:
+
+- [`nvim/lua/plugins/dap.lua`](nvim/lua/plugins/dap.lua)
+- [`nvim/lua/plugins/jdtls.lua`](nvim/lua/plugins/jdtls.lua)
+
+This setup uses:
+
+- `nvim-dap`
+- `nvim-dap-ui`
+- `nvim-dap-virtual-text`
+- `mason-nvim-dap.nvim`
+- `nvim-dap-go`
+- `nvim-dap-python`
+- `nvim-jdtls` for Java attach/start and Java test debugging
+
+`mason-nvim-dap.nvim` will install:
+
+- `codelldb`
+- `delve`
+- `debugpy`
+
+Debug keymaps:
+
+| Key | Action |
+| --- | --- |
+| `<leader>db` | Toggle breakpoint |
+| `<leader>dB` | Set conditional breakpoint |
+| `<leader>dc` | Continue / start debugging |
+| `<leader>di` | Step into |
+| `<leader>do` | Step over |
+| `<leader>dO` | Step out |
+| `<leader>dr` | Open DAP REPL |
+| `<leader>dt` | Terminate session |
+| `<leader>du` | Toggle DAP UI |
+| `<leader>dl` | Run last debug configuration |
+
+Language-specific debug helpers:
+
+- Go:
+  - `<leader>dn`: debug nearest Go test
+  - `<leader>dN`: debug last Go test
+- Java:
+  - `<leader>dn`: debug nearest Java test method
+  - `<leader>df`: debug Java test class
+
+### Testing
+
+Configured in [`nvim/lua/plugins/test.lua`](nvim/lua/plugins/test.lua).
+
+This setup uses `vim-test` with the Neovim terminal strategy.
+
+| Key | Action |
+| --- | --- |
+| `<leader>tn` | Run nearest test |
+| `<leader>tf` | Run current file |
+| `<leader>ts` | Run test suite |
+| `<leader>tl` | Re-run last test |
+| `<leader>tv` | Jump to the last test output window |
+
+Tests open in a bottom terminal split and start in normal mode so you can inspect failures immediately.
+
+### Sessions and restore
+
+Configured in [`nvim/lua/plugins/persistence.lua`](nvim/lua/plugins/persistence.lua).
+
+Sessions restore buffers, tabs, terminals, folds, and local options.
+
+| Key | Action |
+| --- | --- |
+| `<leader>wr` | Restore the current cwd session |
+| `<leader>wl` | Restore the last session |
+| `<leader>wd` | Stop session saving for the current run |
 
 ### Completion and snippets
 
@@ -477,7 +553,7 @@ This setup uses:
 - `friendly-snippets` for snippet collections
 - LSP, path, buffer, and command-line completion sources
 
-#### Completion keys
+Completion keys:
 
 | Key | Action |
 | --- | --- |
@@ -493,49 +569,25 @@ This setup uses:
 | `Ctrl+l` | Expand snippet or jump forward |
 | `Ctrl+h` | Jump backward in snippet |
 
-Command-line completion is also enabled for:
+### Editing quality-of-life plugins
 
-- `/` and `?` using buffer content
-- `:` using path and command-line sources
+Configured in:
 
-### Git integration
+- [`nvim/lua/plugins/mini.lua`](nvim/lua/plugins/mini.lua)
+- [`nvim/lua/plugins/autopairs.lua`](nvim/lua/plugins/autopairs.lua)
+- [`nvim/lua/plugins/colorizer.lua`](nvim/lua/plugins/colorizer.lua)
+- [`nvim/lua/plugins/todo-comment.lua`](nvim/lua/plugins/todo-comment.lua)
 
-Configured in [`nvim/lua/plugins/git.lua`](nvim/lua/plugins/git.lua).
+Added editing helpers:
 
-This setup uses `gitsigns.nvim` with custom sign characters:
+- `mini.comment`: comment toggling with `gc`
+- `mini.surround`: add, delete, replace, find, and highlight surrounds with `sa`, `sd`, `sr`, `sf`, `sF`, `sh`, `sn`
+- `mini.ai`: richer `a`/`i` textobjects
+- `nvim-autopairs`: automatic pair insertion
+- `nvim-colorizer.lua`: inline color previews
+- `todo-comments.nvim`: TODO navigation
 
-- `+` for additions
-- `~` for changes
-- `_` for deletions
-- `‾` for top deletions
-
-Git keymap:
-
-| Key | Action |
-| --- | --- |
-| `<leader>gd` | Diff current buffer |
-
-Git information is also integrated into the custom statusline.
-
-### Diagnostics and TODO navigation
-
-#### Diagnostics
-
-The diagnostic list can be opened with:
-
-| Key | Action |
-| --- | --- |
-| `<leader>q` | Open location list with diagnostics |
-
-Diagnostics are configured to:
-
-- avoid updating during insert mode
-- show rounded floating windows
-- include severity and line number in the float text
-
-#### TODO comments
-
-Configured in [`nvim/lua/plugins/todo-comment.lua`](nvim/lua/plugins/todo-comment.lua).
+TODO keymaps:
 
 | Key | Action |
 | --- | --- |
@@ -551,10 +603,23 @@ Treesitter is enabled for:
 - `bash`
 - `c`
 - `cpp`
+- `go`
+- `gomod`
+- `gosum`
+- `gowork`
+- `java`
+- `json`
 - `latex`
 - `lua`
+- `luadoc`
 - `markdown`
+- `markdown_inline`
 - `python`
+- `query`
+- `toml`
+- `vim`
+- `vimdoc`
+- `yaml`
 
 Features enabled:
 
@@ -562,7 +627,7 @@ Features enabled:
 - indentation
 - incremental selection
 
-#### Treesitter incremental selection keys
+Incremental selection keys:
 
 | Key | Action |
 | --- | --- |
@@ -570,169 +635,68 @@ Features enabled:
 | `Ctrl+s` | Expand to scope |
 | `Alt+Space` | Shrink selection |
 
-### Other quality-of-life plugins
-
-#### which-key
-
-Configured in [`nvim/lua/plugins/which-key.lua`](nvim/lua/plugins/which-key.lua).
-
-This displays available key groups after you press `Space`, helping you discover mappings such as:
-
-- code
-- document
-- file
-- Git
-- rename
-- search
-- workspace
-- toggle / terminal
-
-#### autopairs
-
-Configured in [`nvim/lua/plugins/autopairs.lua`](nvim/lua/plugins/autopairs.lua).
-
-Automatically inserts matching pairs such as:
-
-- `()`
-- `[]`
-- `{}`
-- quotes
-
-#### colorizer
-
-Configured in [`nvim/lua/plugins/colorizer.lua`](nvim/lua/plugins/colorizer.lua).
-
-Shows inline previews for color values in files that contain them.
-
-#### markdown preview
-
-Configured in [`nvim/lua/plugins/markdown.lua`](nvim/lua/plugins/markdown.lua).
-
-When editing Markdown, the config loads `markdown-preview.nvim` so you can preview documents in the browser using the plugin's commands.
-
-#### VimTeX
-
-Configured in [`nvim/lua/plugins/latex.lua`](nvim/lua/plugins/latex.lua).
-
-This setup:
-
-- enables LaTeX support through `vimtex`
-- sets the TeX flavor to `latex`
-- uses Skim as the PDF viewer on macOS
-
 ### Filetype-specific behavior
 
 The directory [`nvim/after/ftplugin`](nvim/after/ftplugin) applies per-language settings.
 
-#### Markdown
+Highlights:
 
-File: [`nvim/after/ftplugin/markdown.vim`](nvim/after/ftplugin/markdown.vim)
-
-- 4-space indentation
-- spell check enabled
-
-#### TeX
-
-File: [`nvim/after/ftplugin/tex.vim`](nvim/after/ftplugin/tex.vim)
-
-- spell check enabled
-
-#### Plain text
-
-File: [`nvim/after/ftplugin/text.vim`](nvim/after/ftplugin/text.vim)
-
-- spell check enabled
-
-#### Python
-
-File: [`nvim/after/ftplugin/python.vim`](nvim/after/ftplugin/python.vim)
-
-- 4-space indentation
-- color column at 80
-- text width at 79
-- command: `:RunPython` runs the current file with `python3`
-
-#### C
-
-File: [`nvim/after/ftplugin/c.vim`](nvim/after/ftplugin/c.vim)
-
-- 2-space indentation
-- color column at 80
-- text width at 79
-- `matchpairs` includes `= : ;`
-- command: `:RunC` compiles and runs the current file with `gcc`
-
-#### C++
-
-File: [`nvim/after/ftplugin/cpp.vim`](nvim/after/ftplugin/cpp.vim)
-
-- 2-space indentation
-- color column at 80
-- text width at 79
-- `matchpairs` includes `= : ;`
-- command: `:RunCpp` compiles and runs the current file with `g++`
-
-#### Java
-
-File: [`nvim/after/ftplugin/java.vim`](nvim/after/ftplugin/java.vim)
-
-- 4-space indentation
-- color column at 120
-- text width at 120
-- `matchpairs` includes `= : ;`
-
-#### Lua
-
-File: [`nvim/after/ftplugin/lua.lua`](nvim/after/ftplugin/lua.lua)
-
-- 2-space indentation
-- color column at 120
-- text width at 119
-- command: `:RunLua` runs the current file in a floating terminal window
-
-#### Makefiles
-
-File: [`nvim/after/ftplugin/make.vim`](nvim/after/ftplugin/make.vim)
-
-- tabs preserved
-- no space expansion
-
-#### Git config files
-
-File: [`nvim/after/ftplugin/gitconfig.vim`](nvim/after/ftplugin/gitconfig.vim)
-
-- tabs preserved
-- no forced shift width
+- Markdown, TeX, and plain text enable spell checking
+- Python follows 79-column formatting helpers and adds `:RunPython`
+- C and C++ define `:RunC` and `:RunCpp`
+- Lua defines `:RunLua` in a floating terminal
+- Java follows 4-space IntelliJ-style indentation
 
 ### Practical Neovim workflow
 
 A typical editing session in this setup looks like this:
 
 1. Open a project with `nvim .`.
-2. Use `<leader>n` to inspect the file tree.
-3. Use `<leader>sf` or `<leader>sg` to jump to files or text quickly.
-4. Open a floating terminal with `<leader>tt` for shell work.
-5. Use `gd`, `gr`, `<leader>ca`, and `<leader>rn` once the language server attaches.
-6. Use `<leader>F` to format the current buffer.
-7. Use `<leader>gd` to inspect Git changes in the current file.
-8. Use `:TrimWhitespace` before saving if needed.
+2. Restore the last session with `<leader>wl` if you want to continue a previous workspace.
+3. Use `<leader>n`, `<leader>sf`, and `<leader>sg` to jump around quickly.
+4. Use `gd`, `gr`, `<leader>ca`, and `<leader>rn` once the language server attaches.
+5. Save normally and let format-on-save do the default cleanup.
+6. Run `<leader>cl` when you want an explicit lint pass.
+7. Use `<leader>tn` or `<leader>tf` to run tests in a terminal split.
+8. Start a debug session with `<leader>dc` and inspect it with `<leader>du`.
+9. Use `Alt+h/j/k/l` when you want to flow between Neovim splits and WezTerm panes.
 
-### Dependencies and assumptions
+## Dependencies and assumptions
 
 This config expects or benefits from the following tools:
 
 - `zsh` for WezTerm's default shell
 - a Nerd Font for the best icon experience
 - `git` for plugin installation and Git integrations
-- `ripgrep` for fast Telescope grep searches
+- `ripgrep` for Telescope grep searches
 - `make` and a C compiler for `telescope-fzf-native.nvim`
-- language servers supported by Mason
+- Neovim 0.11+ is recommended because newer `nvim-lspconfig` releases are dropping 0.10 support
 - `python3` for `:RunPython`
 - `gcc` for `:RunC`
 - `g++` for `:RunCpp`
 - Skim on macOS for the VimTeX PDF viewer
+- external formatter and linter CLIs if you want those integrations to be active on save:
+  - `stylua`
+  - `clang-format`
+  - `gofumpt`
+  - `goimports`
+  - `google-java-format`
+  - `ruff`
+  - `shfmt`
+  - `shellcheck`
+  - `luacheck`
+  - `markdownlint`
+  - `prettier`
+  - `taplo`
+  - `latexindent`
+- the `wezterm` CLI on `PATH` if you want the smoothest Neovim-to-WezTerm pane handoff from `smart-splits.nvim`
 
-### Files to edit when customizing
+Notes:
+
+- Treesitter will download any newly added parsers the first time you start Neovim after updating.
+- Java test/debug bundles are installed through Mason when needed. If the first Java debug attempt only installs tools, reopen the project and retry.
+
+## Files to edit when customizing
 
 If you want to extend or change behavior later, these are the main entry points:
 
@@ -744,11 +708,9 @@ If you want to extend or change behavior later, these are the main entry points:
 
 ## Summary
 
-This dotfiles repo gives you:
+This dotfiles repo now gives you:
 
-- a leader-driven WezTerm workflow built around panes, tabs, and workspaces
-- a keyboard-centric Neovim setup with Telescope, LSP, Treesitter, Git, and terminals
-- filetype-specific commands for common languages
+- a leader-driven WezTerm workflow with workspaces, launch helpers, quick-select, and Neovim-aware pane movement
+- a keyboard-centric Neovim setup with LSP, format-on-save, optional linting, DAP debugging, test execution, sessions, and persistent undo
+- richer editing primitives through comments, surrounds, textobjects, and better Treesitter coverage
 - a consistent Rose Pine Moon visual theme across both terminal and editor
-
-If you want, the next useful step is generating a shorter cheat sheet from this README with only the daily-use keybindings.

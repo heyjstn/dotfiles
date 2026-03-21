@@ -10,7 +10,28 @@ local M = { "nvim-treesitter/nvim-treesitter" }
 M.build = ":TSUpdate"
 
 M.opts = {
-  ensure_installed = { "bash", "c", "cpp", "latex", "lua", "markdown", "python", },
+  ensure_installed = {
+    "bash",
+    "c",
+    "cpp",
+    "go",
+    "gomod",
+    "gosum",
+    "gowork",
+    "java",
+    "json",
+    "latex",
+    "lua",
+    "luadoc",
+    "markdown",
+    "markdown_inline",
+    "python",
+    "query",
+    "toml",
+    "vim",
+    "vimdoc",
+    "yaml",
+  },
   auto_install = false,
 
   highlight = { enable = true, },

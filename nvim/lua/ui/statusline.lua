@@ -83,13 +83,13 @@ Statusline.getDiagnostics = function()
     str = str .. " E: " .. count.e
   end
   if count.w > 0 then
-    str = str .. " H: " .. count.w
+    str = str .. " W: " .. count.w
   end
   if count.i > 0 then
     str = str .. " I: " .. count.i
   end
   if count.h > 0 then
-    str = str .. " W: " .. count.e
+    str = str .. " H: " .. count.h
   end
 
   return (str ~= "" and str .. " " or "")
@@ -161,7 +161,7 @@ end
 
 Statusline.setup = function()
   -- Safeguard
-  vim.opt.statusline = "%{%v:lua.Statusline.active()%}"
+  vim.opt.statusline = "%!v:lua.Statusline.getActiveStatusline()"
 
   local statusline_augroup = vim.api.nvim_create_augroup("Statusline", {})
   vim.api.nvim_create_autocmd(
