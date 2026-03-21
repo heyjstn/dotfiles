@@ -20,9 +20,6 @@ M.dependencies = {
 }
 
 M.config = function()
-  local lspconfig = require("lspconfig")
-  local util = require("lspconfig.util")
-
   -- Sets the LSP UI look
   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
     vim.lsp.handlers.hover, {
@@ -127,24 +124,23 @@ M.config = function()
         "--completion-style=detailed",
         "--header-insertion=iwyu",
       },
-      root_dir = util.root_pattern(
+      root_markers = {
         ".clangd",
         ".clang-tidy",
         "compile_commands.json",
         "compile_flags.txt",
-        ".git"
-      ),
-      single_file_support = true,
+        ".git",
+      },
     },
     metals = {
-      root_dir = util.root_pattern("build.sbt", "build.sc", "build.mill", "pom.xml", ".git"),
+      root_markers = { "build.sbt", "build.sc", "build.mill", "pom.xml", ".git" },
     },
     pylsp = {},
     texlab = {},
     -- html = { filetypes = { "html", "twig", "hbs"} },
     gopls = {
       filetypes = {"go", "gomod", "gowork", "gotmpl"},
-      root_dir = util.root_pattern("go.mod", ".git"),
+      root_markers = { "go.work", "go.mod", ".git" },
       settings = {
         gopls = {
           -- Enable auto imports
@@ -210,7 +206,8 @@ M.config = function()
 
   for server_name, server in pairs(servers) do
     server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-    lspconfig[server_name].setup(server)
+    vim.lsp.config(server_name, server)
+    vim.lsp.enable(server_name)
   end
 end
 
