@@ -13,10 +13,10 @@ local direction_keys = {
   j = "Down",
   k = "Up",
   l = "Right",
-  Left = "Left",
-  Down = "Down",
-  Up = "Up",
-  Right = "Right",
+  LeftArrow = "Left",
+  DownArrow = "Down",
+  UpArrow = "Up",
+  RightArrow = "Right",
 }
 
 local function basename(s)
@@ -191,10 +191,10 @@ config.keys = {
   split_nav("move", "j"),
   split_nav("move", "k"),
   split_nav("move", "l"),
-  split_nav("resize", "Left"),
-  split_nav("resize", "Down"),
-  split_nav("resize", "Up"),
-  split_nav("resize", "Right"),
+  split_nav("resize", "LeftArrow"),
+  split_nav("resize", "DownArrow"),
+  split_nav("resize", "UpArrow"),
+  split_nav("resize", "RightArrow"),
 }
 -- I can use the tab navigator (LDR t), but I also want to quickly navigate tabs with index
 for i = 1, 9 do
