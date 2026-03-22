@@ -135,7 +135,30 @@ M.config = function()
     metals = {
       root_markers = { "build.sbt", "build.sc", "build.mill", "pom.xml", ".git" },
     },
-    pylsp = {},
+    pyright = {
+      settings = {
+        python = {
+          analysis = {
+            autoImportCompletions = true,
+            autoSearchPaths = true,
+            diagnosticMode = "openFilesOnly",
+            useLibraryCodeForTypes = true,
+          },
+        },
+      },
+    },
+    rust_analyzer = {
+      settings = {
+        ["rust-analyzer"] = {
+          cargo = {
+            allFeatures = true,
+          },
+          procMacro = {
+            enable = true,
+          },
+        },
+      },
+    },
     texlab = {},
     -- html = { filetypes = { "html", "twig", "hbs"} },
     gopls = {
@@ -199,7 +222,8 @@ M.config = function()
       "gopls",
       "jdtls",
       "lua_ls",
-      "pylsp",
+      "pyright",
+      "rust_analyzer",
       "texlab",
     },
   })

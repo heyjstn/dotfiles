@@ -27,6 +27,7 @@ M.opts = {
     "markdown_inline",
     "python",
     "query",
+    "rust",
     "toml",
     "vim",
     "vimdoc",

@@ -40,6 +40,7 @@ return {
       lua = { "stylua" },
       markdown = { "prettier" },
       python = { "ruff_organize_imports", "ruff_format" },
+      rust = { "rustfmt" },
       sh = { "shfmt" },
       tex = { "latexindent" },
       toml = { "taplo" },

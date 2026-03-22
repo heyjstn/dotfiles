@@ -674,6 +674,7 @@ LSP                                                              *theovim-lsp*
   - LaTeX (`texlab`)
   - Lua (`lua_ls`)
   - Python (`pyright`)
+  - Rust (`rust_analyzer`)
 
 
 When LSP server(s) is active in the buffer, it will be displayed in the

@@ -496,7 +496,8 @@ Managed language servers:
 - `gopls`
 - `jdtls`
 - `lua_ls`
-- `pylsp`
+- `pyright`
+- `rust_analyzer`
 - `texlab`
 
 Diagnostics:
@@ -694,6 +695,7 @@ Treesitter is enabled for:
 - `markdown_inline`
 - `python`
 - `query`
+- `rust`
 - `toml`
 - `vim`
 - `vimdoc`
@@ -768,6 +770,7 @@ This config expects or benefits from the following tools:
   - `prettier`
   - `taplo`
   - `latexindent`
+  - `rustfmt`
 - the `wezterm` CLI on `PATH` if you want the smoothest Neovim-to-WezTerm pane handoff from `smart-splits.nvim`
 
 Notes:
