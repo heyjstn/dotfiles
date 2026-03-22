@@ -23,10 +23,10 @@ return {
       vim.keymap.set("n", lhs, rhs, { silent = true, noremap = true, desc = desc })
     end
 
-    map("<leader>oo", "<Cmd>Obsidian quick_switch<CR>", "[O]bsidian [O]pen note")
+    map("<leader>oo", "<Cmd>Obsidian quick_switch<CR>", "[O]bsidian [O]pen note picker")
     map("<leader>on", "<Cmd>Obsidian new<CR>", "[O]bsidian [N]ew note")
-    map("<leader>os", "<Cmd>Obsidian search<CR>", "[O]bsidian [S]earch notes")
-    map("<leader>ot", "<Cmd>Obsidian today<CR>", "[O]bsidian [T]oday")
+    map("<leader>os", "<Cmd>Obsidian search<CR>", "[O]bsidian [S]earch vault notes")
+    map("<leader>ot", "<Cmd>Obsidian today<CR>", "[O]bsidian [T]oday's note")
     map("<leader>ob", "<Cmd>Obsidian backlinks<CR>", "[O]bsidian [B]acklinks")
   end,
 }

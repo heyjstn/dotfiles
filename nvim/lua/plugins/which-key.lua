@@ -8,7 +8,7 @@ return {
         { "<leader>d",  group = "[D]ebug / [D]ocument" },
         { "<leader>f",  group = "[F]ile" },
         { "<leader>g",  group = "[G]it" },
-        { "<leader>o",  group = "[O]bsidian" },
+        { "<leader>o",  group = "[O]bsidian Vault" },
         { "<leader>r",  group = "[R]ename" },
         { "<leader>s",  group = "[S]earch" },
         { "<leader>w",  group = "[W]orkspace" },
