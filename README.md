@@ -175,6 +175,7 @@ This configuration focuses on:
 - keyboard-driven navigation
 - built-in LSP with Mason-managed servers
 - Telescope-powered search
+- Obsidian note navigation for Markdown vaults
 - persistent undo and session restore
 - automatic formatting and on-demand linting
 - DAP-based debugging
@@ -278,6 +279,24 @@ The tabline shows:
 | `<leader>b` | Show buffer list and prepare `:b` |
 | `<leader>k` | Show buffer list and prepare `:bdelete` |
 
+#### Tab navigation
+
+These are mostly stock Neovim tab commands, plus the custom clickable tabline.
+
+| Key | Action |
+| --- | --- |
+| `gt` | Go to the next tab |
+| `gT` | Go to the previous tab |
+| `{count}gt` | Jump directly to tab number `{count}` |
+| `:tabnew` | Open a new tab |
+| `:tabclose` | Close the current tab |
+
+Tabline behavior:
+
+- click a tab label to switch to that tab
+- click the `X` on a tab to close it when the current buffer is not modified
+- modified buffers show `+` instead of a close button
+
 #### Window and pane navigation
 
 Built-in split creation:
@@ -355,6 +374,17 @@ Configured in [`nvim/lua/plugins/neo-tree.lua`](nvim/lua/plugins/neo-tree.lua).
 | --- | --- |
 | `<leader>n` | Toggle Neo-tree and reveal current file |
 
+Useful navigation inside Neo-tree:
+
+| Key | Action |
+| --- | --- |
+| `Enter` | Open the selected file or directory |
+| `q` | Close the Neo-tree window |
+| `?` | Show Neo-tree help |
+| `Ctrl+h` | Move from the editor into the tree if it is on the left |
+| `Ctrl+l` | Move from the tree back into the editor |
+| `Ctrl+w w` | Cycle between the tree and editor windows |
+
 Neo-tree behavior:
 
 - appears on the left
@@ -394,6 +424,54 @@ Git-related Telescope shortcuts:
 | `<leader>gf` | Search Git files |
 | `<leader>gc` | Search Git commits |
 | `<leader>gs` | Search Git status |
+
+Useful picker navigation:
+
+| Key | Action |
+| --- | --- |
+| `Ctrl+j` | Move to the next result |
+| `Ctrl+k` | Move to the previous result |
+| `Enter` | Open the selected result |
+| `Esc` | Close the Telescope picker |
+
+If you forget the available mappings in a Telescope picker, press `?` to show them.
+
+### Obsidian notes
+
+Configured in [`nvim/lua/plugins/obsidian.lua`](nvim/lua/plugins/obsidian.lua).
+
+This setup adds [`obsidian.nvim`](https://github.com/obsidian-nvim/obsidian.nvim) for Markdown note workflows.
+
+Defaults:
+
+- loads for Markdown files and the `:Obsidian` command
+- uses `~/Documents/notes` as the default vault workspace
+- uses your existing Telescope and `nvim-cmp` setup when available
+- sets `conceallevel=1` for Markdown buffers so Obsidian UI features render cleanly
+
+Obsidian keymaps:
+
+| Key | Action |
+| --- | --- |
+| `<leader>oo` | Quick switch to another note |
+| `<leader>on` | Create a new note |
+| `<leader>os` | Search notes in the vault |
+| `<leader>ot` | Open or create today's note |
+| `<leader>ob` | Show backlinks for the current note |
+
+Useful Obsidian commands:
+
+| Command | Action |
+| --- | --- |
+| `:Obsidian` | Show available subcommands |
+| `:Obsidian quick_switch` | Fuzzy switch to another note |
+| `:Obsidian search` | Search the vault contents |
+| `:Obsidian new` | Create a new note |
+| `:Obsidian backlinks` | Show references to the current note |
+| `:Obsidian open` | Open the current note in the Obsidian app |
+| `:checkhealth obsidian` | Check plugin installation and environment |
+
+If your vault lives somewhere else, change the workspace path in [`nvim/lua/plugins/obsidian.lua`](nvim/lua/plugins/obsidian.lua).
 
 ### LSP, diagnostics, formatting, and linting
 
@@ -671,6 +749,7 @@ This config expects or benefits from the following tools:
 - `ripgrep` for Telescope grep searches
 - `make` and a C compiler for `telescope-fzf-native.nvim`
 - Neovim 0.11+ is recommended because newer `nvim-lspconfig` releases are dropping 0.10 support
+- `pngpaste` on macOS if you want to use `:Obsidian paste_img`
 - `python3` for `:RunPython`
 - `gcc` for `:RunC`
 - `g++` for `:RunCpp`

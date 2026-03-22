@@ -6,3 +6,4 @@
 " Already done in the built-in ftplugin, repeated for verbosity
 setlocal expandtab tabstop=4 softtabstop=4 shiftwidth=4
 setlocal spell
+setlocal conceallevel=1

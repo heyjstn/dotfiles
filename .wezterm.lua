@@ -79,23 +79,23 @@ config.default_prog = { zsh_path, "-l" }
 config.color_scheme = "rose-pine-moon"
 config.font = wezterm.font_with_fallback({
   { family = "JetBrainsMono Nerd Font", weight = "Medium" },
-  { family = "IosevkaTerm Nerd Font", weight = "Medium" },
+  { family = "IosevkaTerm Nerd Font",   weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
   { family = "Menlo" },
 })
 
-local opacity = 0.95
+local opacity = 0.90
 config.window_background_opacity = opacity
 config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
 config.default_workspace = "main"
 config.launch_menu = {
-  { label = "Home", cwd = wezterm.home_dir, args = { zsh_path, "-l" } },
-  { label = "Dotfiles", cwd = wezterm.home_dir .. "/dotfiles", args = { zsh_path, "-l" } },
+  { label = "Home",          cwd = wezterm.home_dir,                     args = { zsh_path, "-l" } },
+  { label = "Dotfiles",      cwd = wezterm.home_dir .. "/dotfiles",      args = { zsh_path, "-l" } },
   { label = "Neovim Config", cwd = wezterm.home_dir .. "/dotfiles/nvim", args = { zsh_path, "-l" } },
 }
-config.macos_window_background_blur=50
+config.macos_window_background_blur = 50
 
 -- Dim inactive panes
 config.inactive_pane_hsb = {
