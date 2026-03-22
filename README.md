@@ -290,6 +290,7 @@ These are mostly stock Neovim tab commands, plus the custom clickable tabline.
 | `{count}gt` | Jump directly to tab number `{count}` |
 | `:tabnew` | Open a new tab |
 | `:tabclose` | Close the current tab |
+| Tabline `X` | Close a tab with the mouse when its buffer is not modified |
 
 Tabline behavior:
 
@@ -378,12 +379,19 @@ Useful navigation inside Neo-tree:
 
 | Key | Action |
 | --- | --- |
-| `Enter` | Open the selected file or directory |
+| `Enter` | Open the selected file or directory in the current window |
+| `t` | Open the selected file in a new editor tab |
 | `q` | Close the Neo-tree window |
 | `?` | Show Neo-tree help |
 | `Ctrl+h` | Move from the editor into the tree if it is on the left |
-| `Ctrl+l` | Move from the tree back into the editor |
+| `Ctrl+l` | Move from the tree back into the editor window on the right |
 | `Ctrl+w w` | Cycle between the tree and editor windows |
+
+Common file-explorer workflows:
+
+- Open a file from Neo-tree in a new tab with `t`, then use `gt` and `gT` to move between tabs.
+- Move from Neo-tree to the editor with `Ctrl+l` when the tree is on the left, or use `Ctrl+w w` to cycle windows.
+- Close the current editor tab with `:tabclose`, or click the tabline `X` if the buffer is not modified.
 
 Neo-tree behavior:
 
@@ -733,13 +741,14 @@ A typical editing session in this setup looks like this:
 
 1. Open a project with `nvim .`.
 2. Restore the last session with `<leader>wl` if you want to continue a previous workspace.
-3. Use `<leader>n`, `<leader>sf`, and `<leader>sg` to jump around quickly.
-4. Use `gd`, `gr`, `<leader>ca`, and `<leader>rn` once the language server attaches.
-5. Save normally and let format-on-save do the default cleanup.
-6. Run `<leader>cl` when you want an explicit lint pass.
-7. Use `<leader>tn` or `<leader>tf` to run tests in a terminal split.
-8. Start a debug session with `<leader>dc` and inspect it with `<leader>du`.
-9. Use `Alt+h/j/k/l` when you want to flow between Neovim splits and WezTerm panes.
+3. Use `<leader>n` to open Neo-tree, `t` to open a selected file in a new tab, and `Ctrl+l` to jump back into the editor.
+4. Use `<leader>sf` and `<leader>sg` to jump around quickly when you want fuzzy search instead of the tree.
+5. Use `gd`, `gr`, `<leader>ca`, and `<leader>rn` once the language server attaches.
+6. Save normally and let format-on-save do the default cleanup.
+7. Run `<leader>cl` when you want an explicit lint pass.
+8. Use `<leader>tn` or `<leader>tf` to run tests in a terminal split.
+9. Start a debug session with `<leader>dc` and inspect it with `<leader>du`.
+10. Use `Alt+h/j/k/l` when you want to flow between Neovim splits and WezTerm panes.
 
 ## Dependencies and assumptions
 
