@@ -3,7 +3,7 @@
 This repository contains two main user-facing configurations:
 
 - [`.wezterm.lua`](.wezterm.lua): terminal workflow, panes, tabs, workspaces, quick-select, and project launch helpers.
-- [`nvim/`](nvim): Neovim editor, plugins, diagnostics, formatting, debugging, testing, and custom UI.
+- [`nvim/`](nvim): Neovim editor, plugins, diagnostics, formatting, debugging, testing, and custom UI. This is a modified since I fork the original repository from [theovim](https://github.com/theopn/theovim) 
 
 Both are currently themed with Rose Pine Moon.
 
