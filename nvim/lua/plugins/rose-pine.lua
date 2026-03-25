@@ -2,6 +2,7 @@ local is_transparent = true --> To disable transparency, set this to false
 
 return {
   "rose-pine/neovim",
+  enabled = false,
   name = "rose-pine",
   lazy = false,
   priority = 1000, --> Higher priority over other plugins

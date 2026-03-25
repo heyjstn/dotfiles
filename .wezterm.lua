@@ -76,7 +76,8 @@ if wezterm.config_builder then config = wezterm.config_builder() end
 -- Settings
 config.default_prog = { zsh_path, "-l" }
 
-config.color_scheme = "rose-pine-moon"
+config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
+config.color_scheme = "Darcula"
 config.font = wezterm.font_with_fallback({
   { family = "JetBrainsMono Nerd Font", weight = "Medium" },
   { family = "IosevkaTerm Nerd Font",   weight = "Medium" },
