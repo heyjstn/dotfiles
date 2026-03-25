@@ -7,6 +7,7 @@ return {
   },
   config = function()
     local jdtls = require("jdtls")
+    local jdtls_dap = require("jdtls.dap")
     local setup = require("jdtls.setup")
     local registry_ok, mason_registry = pcall(require, "mason-registry")
 
@@ -76,8 +77,10 @@ return {
           },
         },
         on_attach = function(_, bufnr)
-          jdtls.setup_dap({ hotcodereplace = "auto" })
-          jdtls.dap.setup_dap_main_class_configs()
+          jdtls_dap.setup_dap({ hotcodereplace = "auto" })
+          if vim.startswith(vim.uri_from_bufnr(bufnr), "file://") then
+            jdtls_dap.setup_dap_main_class_configs()
+          end
 
           vim.keymap.set("n", "<leader>dn", jdtls.test_nearest_method,
             { buffer = bufnr, desc = "[D]ebug Java [N]earest test" })
