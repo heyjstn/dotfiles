@@ -2,7 +2,10 @@ return {
   "obsidian-nvim/obsidian.nvim",
   version = "*",
   cmd = { "Obsidian" },
-  ft = { "markdown" },
+  event = {
+    "BufReadPre " .. vim.fn.expand("~") .. "/Documents/notes/**.md",
+    "BufNewFile " .. vim.fn.expand("~") .. "/Documents/notes/**.md",
+  },
   dependencies = {
     "nvim-telescope/telescope.nvim",
     "hrsh7th/nvim-cmp",

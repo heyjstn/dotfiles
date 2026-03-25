@@ -124,12 +124,12 @@ M.config = function()
         "--completion-style=detailed",
         "--header-insertion=iwyu",
       },
+      filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
       root_markers = {
         ".clangd",
         ".clang-tidy",
         "compile_commands.json",
         "compile_flags.txt",
-        ".git",
       },
     },
     metals = {
