@@ -69,6 +69,14 @@ local function split_nav(mode, key)
   }
 end
 
+local function send_if_nvim(key, mods)
+  return wezterm.action_callback(function(window, pane)
+    if is_nvim(pane) then
+      window:perform_action(act.SendKey { key = key, mods = mods }, pane)
+    end
+  end)
+end
+
 local config = {}
 -- Use config builder object if possible
 if wezterm.config_builder then config = wezterm.config_builder() end
@@ -113,6 +121,8 @@ config.keys = {
   { key = "phys:Space", mods = "LEADER",      action = act.ActivateCommandPalette },
   { key = "f",          mods = "LEADER",      action = act.QuickSelect },
   { key = "/",          mods = "LEADER",      action = act.Search("CurrentSelectionOrEmptyString") },
+  { key = "[",          mods = "SUPER",       action = send_if_nvim("[", "ALT") },
+  { key = "]",          mods = "SUPER",       action = send_if_nvim("]", "ALT") },
 
   -- Pane keybindings
   { key = "s",          mods = "LEADER",      action = act.SplitVertical { domain = "CurrentPaneDomain" } },

@@ -110,6 +110,17 @@ set("n", "N", "Nzz")
 set("n", "<C-u>", "<C-u>zz")
 set("n", "<C-d>", "<C-d>zz")
 
+local function jump_in_history(keys)
+  vim.api.nvim_feedkeys(vim.keycode(keys), "n", false)
+end
+
+set("n", "<M-[>", function()
+  jump_in_history("<C-o>")
+end, { desc = "Go back in jump history" })
+set("n", "<M-]>", function()
+  jump_in_history("<C-i>")
+end, { desc = "Go forward in jump history" })
+
 set("n", "<C-w>+", "<C-w>+<CMD>call feedkeys('<C-w>')<CR>", { desc = "Increase the window height (press + to repeat)" })
 set("n", "<C-w>-", "<C-w>-<CMD>call feedkeys('<C-w>')<CR>", { desc = "Decrease the window height (press - to repeat)" })
 set("n", "<C-w>>", "<C-w>><CMD>call feedkeys('<C-w>')<CR>", { desc = "Increase the window width (press > to repeat)" })
