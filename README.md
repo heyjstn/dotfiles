@@ -5,7 +5,7 @@ This repository contains two main user-facing configurations:
 - [`.wezterm.lua`](.wezterm.lua): terminal workflow, panes, tabs, workspaces, quick-select, and project launch helpers.
 - [`nvim/`](nvim): Neovim editor, plugins, diagnostics, formatting, debugging, testing, and custom UI. This is a modified since I fork the original repository from [theovim](https://github.com/theopn/theovim) 
 
-Both are currently themed with Rose Pine Moon.
+Both are currently themed with Kanagawa.
 
 ## Repository Layout
 
@@ -32,7 +32,7 @@ The WezTerm setup is defined in [`.wezterm.lua`](.wezterm.lua). It is built arou
 Key defaults:
 
 - Shell: `zsh -l`
-- Theme: `rose-pine-moon`
+- Theme: `kanagawa`
 - Font fallback: JetBrains Mono Nerd Font, IosevkaTerm Nerd Font, Symbols Nerd Font Mono, Menlo
 - Window style:
   - 95% background opacity
@@ -184,7 +184,7 @@ This configuration focuses on:
 
 ### Theme
 
-Neovim uses Rose Pine Moon through [`nvim/lua/plugins/rose-pine.lua`](nvim/lua/plugins/rose-pine.lua).
+Neovim uses Kanagawa Wave through [`nvim/lua/plugins/kanagawa.lua`](nvim/lua/plugins/kanagawa.lua).
 
 Transparency is enabled, so floating windows and editor surfaces keep a translucent look when your terminal supports it.
 
@@ -502,7 +502,7 @@ Managed language servers:
 - `bashls`
 - `clangd`
 - `gopls`
-- `jdtls`
+- `jdtls` (managed by `nvim-java`)
 - `lua_ls`
 - `pyright`
 - `rust_analyzer`
@@ -569,7 +569,7 @@ This setup uses:
 - `mason-nvim-dap.nvim`
 - `nvim-dap-go`
 - `nvim-dap-python`
-- `nvim-jdtls` for Java attach/start and Java test debugging
+- `nvim-java` for Java LSP, DAP, build, and test integration
 
 `mason-nvim-dap.nvim` will install:
 
@@ -597,9 +597,32 @@ Language-specific debug helpers:
 - Go:
   - `<leader>dn`: debug nearest Go test
   - `<leader>dN`: debug last Go test
-- Java:
-  - `<leader>dn`: debug nearest Java test method
-  - `<leader>df`: debug Java test class
+
+### Java development
+
+Configured in [`nvim/lua/plugins/jdtls.lua`](nvim/lua/plugins/jdtls.lua).
+
+This setup uses [`nvim-java`](https://github.com/nvim-java/nvim-java), which wraps `jdtls` and provides automatic installation, DAP configuration, and high-level commands for Java projects.
+
+`nvim-java` automatically manages:
+
+- jdtls installation and lifecycle through Mason
+- Java debug adapter setup
+- Java test runner setup
+
+Useful nvim-java commands:
+
+| Command | Action |
+| --- | --- |
+| `:JavaDap config` | Set up DAP configuration for the current project |
+| `:JavaTest runCurrentClass` | Run tests in the current class |
+| `:JavaTest runCurrentMethod` | Run the test under the cursor |
+| `:JavaTest debugCurrentClass` | Debug tests in the current class |
+| `:JavaTest debugCurrentMethod` | Debug the test under the cursor |
+| `:JavaBuild buildWorkspace` | Build the workspace |
+| `:JavaSettings changeRuntime` | Switch the Java runtime for the project |
+| `:JavaRefactor extractVariable` | Extract a variable from the selection |
+| `:JavaRefactor extractMethod` | Extract a method from the selection |
 
 ### Testing
 
@@ -785,7 +808,7 @@ This config expects or benefits from the following tools:
 Notes:
 
 - Treesitter will download any newly added parsers the first time you start Neovim after updating.
-- Java test/debug bundles are installed through Mason when needed. If the first Java debug attempt only installs tools, reopen the project and retry.
+- `nvim-java` automatically installs jdtls, the Java debug adapter, and test bundles through Mason on first use.
 
 ## Files to edit when customizing
 
@@ -804,4 +827,4 @@ This dotfiles repo now gives you:
 - a leader-driven WezTerm workflow with workspaces, launch helpers, quick-select, and Neovim-aware pane movement
 - a keyboard-centric Neovim setup with LSP, format-on-save, optional linting, DAP debugging, test execution, sessions, and persistent undo
 - richer editing primitives through comments, surrounds, textobjects, and better Treesitter coverage
-- a consistent Rose Pine Moon visual theme across both terminal and editor
+- a consistent Kanagawa visual theme across both terminal and editor

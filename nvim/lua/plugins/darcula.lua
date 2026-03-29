@@ -2,6 +2,7 @@ local is_transparent = true
 
 return {
   "doums/darcula",
+  enabled = false,
   lazy = false,
   priority = 1000,
   config = function()

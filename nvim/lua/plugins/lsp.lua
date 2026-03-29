@@ -220,7 +220,6 @@ M.config = function()
       "bashls",
       "clangd",
       "gopls",
-      "jdtls",
       "lua_ls",
       "pyright",
       "rust_analyzer",

@@ -85,7 +85,7 @@ if wezterm.config_builder then config = wezterm.config_builder() end
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
-config.color_scheme = "Darcula"
+config.color_scheme = "Kanagawa"
 config.font = wezterm.font_with_fallback({
   { family = "JetBrainsMono Nerd Font", weight = "Medium" },
   { family = "IosevkaTerm Nerd Font",   weight = "Medium" },
@@ -243,7 +243,7 @@ config.tab_bar_at_bottom = false
 wezterm.on("update-status", function(window, pane)
   -- Workspace name
   local stat = window:active_workspace()
-  local stat_color = "#f7768e"
+  local stat_color = "#C34043"
   -- It's a little silly to have workspace name all the time
   -- Utilize this to display LDR or current key table name
   local overrides = window:get_config_overrides() or {}
@@ -255,11 +255,11 @@ wezterm.on("update-status", function(window, pane)
   window:set_config_overrides(overrides)
   if window:active_key_table() then
     stat = window:active_key_table()
-    stat_color = "#7dcfff"
+    stat_color = "#7FB4CA"
   end
   if window:leader_is_active() then
     stat = "LDR"
-    stat_color = "#bb9af7"
+    stat_color = "#957FB8"
   end
 
   -- Current working directory
@@ -298,7 +298,7 @@ wezterm.on("update-status", function(window, pane)
     -- https://wezfurlong.org/wezterm/config/lua/wezterm/nerdfonts.html
     { Text = wezterm.nerdfonts.md_folder .. "  " .. cwd },
     { Text = " | " },
-    { Foreground = { Color = "#e0af68" } },
+    { Foreground = { Color = "#E6C384" } },
     { Text = wezterm.nerdfonts.fa_code .. "  " .. cmd },
     "ResetAttributes",
     { Text = " | " },
