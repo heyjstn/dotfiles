@@ -32,6 +32,28 @@ return {
     extend_bundles(data_dir .. "/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar")
     extend_bundles(data_dir .. "/mason/packages/java-test/extension/server/*.jar")
 
+    -- Resolve Java 21+ for running jdtls itself (independent of JAVA_HOME)
+    local java_21_home = vim.fn.system("/usr/libexec/java_home -v 21 2>/dev/null"):gsub("\n", "")
+    local java_executable = java_21_home ~= "" and (java_21_home .. "/bin/java") or "java"
+
+    -- Configure available JDK runtimes for project compilation
+    local runtimes = {}
+    if java_21_home ~= "" then
+      table.insert(runtimes, {
+        name = "JavaSE-21",
+        path = java_21_home,
+        default = true,
+      })
+    end
+    -- Add Java 8 runtime if available
+    local java_8_home = vim.fn.system("/usr/libexec/java_home -v 1.8 2>/dev/null"):gsub("\n", "")
+    if java_8_home ~= "" then
+      table.insert(runtimes, {
+        name = "JavaSE-1.8",
+        path = java_8_home,
+      })
+    end
+
     -- Per-buffer: find root and start/attach jdtls
     local function start_jdtls()
       local root_dir = setup.find_root({
@@ -54,7 +76,7 @@ return {
       local workspace_dir = data_dir .. "/jdtls-workspace/" .. project_name
 
       jdtls.start_or_attach({
-        cmd = { "jdtls", "-data", workspace_dir },
+        cmd = { "jdtls", "--java-executable", java_executable, "-data", workspace_dir },
         root_dir = root_dir,
         capabilities = require("cmp_nvim_lsp").default_capabilities(),
         init_options = {
@@ -73,6 +95,9 @@ return {
             },
             referencesCodeLens = {
               enabled = true,
+            },
+            configuration = {
+              runtimes = runtimes,
             },
           },
         },
