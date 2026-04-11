@@ -87,8 +87,9 @@ config.default_prog = { zsh_path, "-l" }
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
 config.color_scheme = "Kanagawa"
 config.font = wezterm.font_with_fallback({
-  { family = "JetBrainsMono Nerd Font", weight = "Medium" },
-  { family = "IosevkaTerm Nerd Font",   weight = "Medium" },
+  -- { family = "Geist Mono",            weight = "Medium" },
+  { family = "Jetbrains Mono",        weight = "Medium" },
+  { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
   { family = "Menlo" },
 })
