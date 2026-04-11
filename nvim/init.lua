@@ -67,7 +67,7 @@ opt.spelloptions     = "camel"  --> Consider CamelCase when checking spelling
 -- Fold
 opt.foldenable       = false                        --> Open all folds until I close them using zc/zC or update using zx
 opt.foldmethod       = "expr"                       --> Use `foldexpr` function for folding
-opt.foldexpr         = "nvim_treesitter#foldexpr()" --> Treesitter folding
+opt.foldexpr         = "v:lua.vim.treesitter.foldexpr()" --> Treesitter folding
 --foldlevel      = 2                            --> Ignore n - 1 level fold
 
 -- Update time
@@ -355,8 +355,8 @@ vim.diagnostic.config({
 })
 
 -- Keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic" })
+vim.keymap.set("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, { desc = "Go to previous [D]iagnostic" })
+vim.keymap.set("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, { desc = "Go to next [D]iagnostic" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open diagnostic float" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 -- }}}

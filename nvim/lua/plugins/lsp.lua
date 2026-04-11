@@ -21,18 +21,12 @@ M.dependencies = {
 
 M.config = function()
   -- Sets the LSP UI look
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-    vim.lsp.handlers.hover, {
-      border = "rounded",
-      title = "Hover"
-    }
-  )
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-    vim.lsp.handlers.signature_help, {
-      border = "rounded",
-      title = "Signature Help"
-    }
-  )
+  vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+    vim.lsp.handlers.hover(err, result, ctx, vim.tbl_deep_extend("force", config or {}, { border = "rounded", title = "Hover" }))
+  end
+  vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, ctx, config)
+    vim.lsp.handlers.signature_help(err, result, ctx, vim.tbl_deep_extend("force", config or {}, { border = "rounded", title = "Signature Help" }))
+  end
 
   -- Makes autocmd for LSP functionalities
   local theovim_lsp_config_group = vim.api.nvim_create_augroup("TheovimLspConfig", { clear = true, })
@@ -73,7 +67,7 @@ M.config = function()
 
       -- Creates an autocmd to highlight the symbol under the cursor
       local client = vim.lsp.get_client_by_id(event.data.client_id)
-      if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+      if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
         local theovim_lsp_hl_group = vim.api.nvim_create_augroup("TheovimLspHl", { clear = false, })
         vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
           buffer = event.buf,
@@ -98,7 +92,7 @@ M.config = function()
       end
 
       -- Creates a keybinding to toggle inlay hints, as hints can displace some of the code
-      if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+      if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
         map("<leader>th", function()
           vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
         end, "[T]oggle Inlay [H]ints")
