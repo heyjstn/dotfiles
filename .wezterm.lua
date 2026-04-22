@@ -95,8 +95,8 @@ config.font = wezterm.font_with_fallback({
 })
 
 local opacity = 0.90
+local is_macos = wezterm.target_triple:find("apple") ~= nil
 config.window_background_opacity = opacity
-config.window_decorations = "RESIZE"
 config.window_close_confirmation = "AlwaysPrompt"
 config.scrollback_lines = 3000
 config.default_workspace = "main"
@@ -106,6 +106,14 @@ config.launch_menu = {
   { label = "Neovim Config", cwd = wezterm.home_dir .. "/dotfiles/nvim", args = { zsh_path, "-l" } },
 }
 config.macos_window_background_blur = 50
+
+if is_macos then
+  -- Two-display fullscreen handling is more reliable with the native macOS Space.
+  config.native_macos_fullscreen_mode = true
+  config.window_decorations = "RESIZE"
+else
+  config.window_decorations = "RESIZE"
+end
 
 -- Dim inactive panes
 config.inactive_pane_hsb = {
@@ -248,12 +256,23 @@ wezterm.on("update-status", function(window, pane)
   -- It's a little silly to have workspace name all the time
   -- Utilize this to display LDR or current key table name
   local overrides = window:get_config_overrides() or {}
-  if window:is_focused() then
-    overrides.window_background_opacity = opacity
+  if is_macos then
+    -- Avoid focus-driven opacity changes on macOS; they line up with fullscreen
+    -- issues when switching focus between displays.
+    if overrides.window_background_opacity ~= nil then
+      overrides.window_background_opacity = nil
+      window:set_config_overrides(overrides)
+    end
   else
-    overrides.window_background_opacity = opacity / 1.25
+    local target_opacity = opacity
+    if not window:is_focused() then
+      target_opacity = opacity / 1.25
+    end
+    if overrides.window_background_opacity ~= target_opacity then
+      overrides.window_background_opacity = target_opacity
+      window:set_config_overrides(overrides)
+    end
   end
-  window:set_config_overrides(overrides)
   if window:active_key_table() then
     stat = window:active_key_table()
     stat_color = "#7FB4CA"
