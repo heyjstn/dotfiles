@@ -9,6 +9,7 @@ return {
   lazy = false,
   opts = {
     close_if_last_window = true,
+    log_to_file = false,
     popup_border_style = "rounded",
     filesystem = {
       hijack_netrw_behavior = "disabled",
