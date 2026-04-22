@@ -263,6 +263,10 @@ The tabline shows:
 
 #### Copy, paste, registers, and selection
 
+The config enables `clipboard=unnamedplus`, so default `y`, `d`, `c`, and `p`
+use the OS clipboard when a provider such as `pbcopy`, `wl-copy`, `xclip`,
+`win32yank`, or OSC52 is available.
+
 | Key | Mode | Action |
 | --- | --- | --- |
 | `<leader>a` | Normal, Visual | Select entire buffer |

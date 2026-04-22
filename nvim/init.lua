@@ -87,6 +87,7 @@ opt.undofile         = true
 opt.sessionoptions:append({ "globals", "localoptions", "terminal" })
 opt.mouse            = "a"
 opt.confirm          = true --> Confirm before exiting with unsaved bufffer(s)
+opt.clipboard:append("unnamedplus") --> Use the OS clipboard for yank/delete/change/put operations
 -- }}}
 
 
