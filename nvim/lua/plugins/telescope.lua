@@ -35,6 +35,11 @@ M.config = function()
 
   telescope.setup({
     defaults = {
+      -- Telescope's Treesitter preview path is incompatible with the newer
+      -- nvim-treesitter API shipped alongside Neovim 0.12.
+      preview = {
+        treesitter = false,
+      },
       mappings = {
         i = {
           ["<C-j>"] = "move_selection_next",
