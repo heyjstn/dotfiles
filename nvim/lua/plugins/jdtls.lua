@@ -8,7 +8,7 @@ return {
   },
   config = function()
     require("java").setup()
-    require("lspconfig").jdtls.setup({
+    vim.lsp.config("jdtls", {
       capabilities = require("cmp_nvim_lsp").default_capabilities(),
       settings = {
         java = {
@@ -27,5 +27,6 @@ return {
         },
       },
     })
+    vim.lsp.enable("jdtls")
   end,
 }

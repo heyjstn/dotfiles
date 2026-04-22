@@ -37,9 +37,9 @@ local function run_lua()
   local win = vim.api.nvim_open_win(buf, true, win_opts)
 
   -- options
-  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe") --> Kill the buffer when hidden
-  vim.api.nvim_buf_set_option(buf, "modifiable", false)
-  vim.api.nvim_win_set_option(win, "winblend", 50)      --> 80 for transparency
+  vim.bo[buf].bufhidden = "wipe" --> Kill the buffer when hidden
+  vim.bo[buf].modifiable = false
+  vim.wo[win].winblend = 50      --> 80 for transparency
 
   -- Execute the command
   vim.fn.termopen(cmd)
