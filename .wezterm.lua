@@ -82,10 +82,23 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
+local theme_mode = "dark" -- Change to "light" to switch both WezTerm and Neovim
+local color_schemes = {
+  dark = "Gruvbox Dark (Gogh)",
+  light = "GruvboxLight",
+}
+
+if not color_schemes[theme_mode] then
+  error("Invalid theme_mode: " .. tostring(theme_mode) .. ". Expected 'dark' or 'light'.")
+end
+
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
-config.color_scheme = "Kanagawa"
+config.color_scheme = color_schemes[theme_mode]
+config.set_environment_variables = {
+  THEME_MODE = theme_mode,
+}
 config.font = wezterm.font_with_fallback({
   -- { family = "Geist Mono",            weight = "Medium" },
   { family = "Jetbrains Mono",        weight = "Medium" },
