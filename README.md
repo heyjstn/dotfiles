@@ -256,7 +256,6 @@ The tabline shows:
 
 | Key | Mode | Action |
 | --- | --- | --- |
-| `jk` | Insert | Exit insert mode |
 | `Esc` | Normal | Clear search highlight |
 | `Esc Esc` | Terminal | Exit terminal mode |
 | `Ctrl+s` | Insert | Fix nearest spelling suggestion and return to insert mode |

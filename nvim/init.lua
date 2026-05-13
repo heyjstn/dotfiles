@@ -128,7 +128,6 @@ set("n", "<C-w>>", "<C-w>><CMD>call feedkeys('<C-w>')<CR>", { desc = "Increase t
 set("n", "<C-w><", "<C-w><<CMD>call feedkeys('<C-w>')<CR>", { desc = "Decrease the window width (press < to repeat)" })
 
 -- Custom keymaps
-set("i", "jk", "<ESC>", { desc = "Better ESC" })
 set("i", "<C-s>", "<C-g>u<ESC>[s1z=`]a<C-g>u", { desc = "Fix nearest [S]pelling error and put the cursor back" })
 
 -- Copy and paste
