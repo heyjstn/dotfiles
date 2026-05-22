@@ -20,6 +20,31 @@ M.dependencies = {
 }
 
 M.config = function()
+  if not vim.g.theovim_lsp_position_params_compat then
+    vim.g.theovim_lsp_position_params_compat = true
+    local make_position_params = vim.lsp.util.make_position_params
+
+    vim.lsp.util.make_position_params = function(window, position_encoding)
+      if position_encoding == nil then
+        local ok, bufnr = pcall(vim.api.nvim_win_get_buf, window or 0)
+        if not ok then
+          bufnr = vim.api.nvim_get_current_buf()
+        end
+
+        for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+          if client.offset_encoding then
+            position_encoding = client.offset_encoding
+            break
+          end
+        end
+
+        position_encoding = position_encoding or "utf-16"
+      end
+
+      return make_position_params(window, position_encoding)
+    end
+  end
+
   -- Sets the LSP UI look
   vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
     vim.lsp.handlers.hover(err, result, ctx, vim.tbl_deep_extend("force", config or {}, { border = "rounded", title = "Hover" }))
