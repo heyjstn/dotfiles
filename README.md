@@ -436,6 +436,23 @@ Git-related Telescope shortcuts:
 | `<leader>gc` | Search Git commits |
 | `<leader>gs` | Search Git status |
 
+Git workflow shortcuts:
+
+| Key | Action |
+| --- | --- |
+| `<leader>gg` | Open Neogit status |
+| `<leader>gl` | Open Neogit log graph |
+| `<leader>gb` | Show full blame for the current line |
+| `<leader>gB` | Toggle inline blame for the current line |
+| `<leader>gp` | Preview the current hunk |
+| `<leader>gd` | Diff the current buffer |
+| `<leader>go` | Open Diffview |
+| `<leader>gh` | Open history for the current file |
+| `<leader>gH` | Open repository history |
+| `<leader>gq` | Close Diffview |
+| `]h` | Go to the next Git hunk |
+| `[h` | Go to the previous Git hunk |
+
 Useful picker navigation:
 
 | Key | Action |

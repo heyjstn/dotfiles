@@ -90,6 +90,8 @@ Here are some of the plugins that will make your life easier.
 - [nvim-colorizer.lua](https://github.com/NvChad/nvim-colorizer.lua) highlight color codes (hex codes, ANSI color name such as "Magenta", CSS functions, etc.)
 - [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) highlights keywords such as `TODO`, `WARN`, etc.
 - [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) provides Git signs in the gutter (+, -, ~, etc.) as well as other useful Git functionalities, such as diff, navigating hunks, and blame tool
+- [diffview.nvim](https://github.com/sindrets/diffview.nvim) provides file and repository history views with side-by-side diffs
+- [Neogit](https://github.com/NeogitOrg/neogit) provides an interactive Git status, log, and commit graph interface
 - [Tokyo Night](https://github.com/folke/tokyonight.nvim) is a beautiful default theme for Theovim
 - [Markdown Preview](https://github.com/iamcco/markdown-preview.nvim) offers a real-time previewer for markdown files in your browser
 - [VimTeX](https://github.com/lervag/vimtex) is a LaTeX integration for Vim, providing syntax highlights and real-time compilation.
