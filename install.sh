@@ -11,6 +11,54 @@ SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ASSETS_DIR="$SCRIPT_DIR/assets"
 FONT_DIR="$HOME/Library/Fonts"
 
+find_brew() {
+  if command -v brew >/dev/null 2>&1; then
+    command -v brew
+    return
+  fi
+
+  if [ -x /opt/homebrew/bin/brew ]; then
+    echo /opt/homebrew/bin/brew
+    return
+  fi
+
+  if [ -x /usr/local/bin/brew ]; then
+    echo /usr/local/bin/brew
+    return
+  fi
+
+  return 1
+}
+
+BREW_BIN=$(find_brew || true)
+
+require_brew() {
+  if [ -z "$BREW_BIN" ]; then
+    echo "Homebrew was not found." >&2
+    echo "Install Homebrew first, then re-run this script." >&2
+    exit 1
+  fi
+}
+
+install_brew_formula() {
+  formula=$1
+  require_brew
+
+  if "$BREW_BIN" list --formula "$formula" >/dev/null 2>&1; then
+    echo "$formula is already installed."
+    return
+  fi
+
+  echo "Installing $formula with Homebrew..."
+  "$BREW_BIN" install "$formula"
+}
+
+install_homebrew_tools() {
+  for formula in fzf zoxide eza; do
+    install_brew_formula "$formula"
+  done
+}
+
 has_libertinus_font() {
   for dir in \
     "$HOME/Library/Fonts" \
@@ -34,15 +82,13 @@ install_libertinus_font() {
     return
   fi
 
-  if ! command -v brew >/dev/null 2>&1; then
-    echo "Libertinus font is not installed, and Homebrew was not found." >&2
-    echo "Install Homebrew first, then re-run this script." >&2
-    exit 1
-  fi
+  require_brew
 
   echo "Libertinus font is not installed. Installing font-libertinus with Homebrew..."
-  brew install --cask font-libertinus
+  "$BREW_BIN" install --cask font-libertinus
 }
+
+install_homebrew_tools
 
 if [ ! -d "$ASSETS_DIR" ]; then
   echo "Missing assets directory: $ASSETS_DIR" >&2

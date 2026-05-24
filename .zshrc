@@ -139,3 +139,18 @@ export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 # symlink
 [ -e "$HOME/obsidian" ] || ln -s "$OBSIDIAN_ICLOUD_DIR" "$HOME/obsidian"
+
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
+
+if command -v eza >/dev/null 2>&1; then
+  alias ls="eza --group-directories-first --icons=auto"
+  alias ll="eza -l --git --group-directories-first --icons=auto"
+  alias la="eza -la --git --group-directories-first --icons=auto"
+  alias lt="eza --tree --level=2 --group-directories-first --icons=auto"
+fi

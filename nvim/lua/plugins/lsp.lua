@@ -1,11 +1,8 @@
-local mason_version = "1.11.0"  -- Last v1 version
-local mason_lspconfig_version = "1.32.0"  -- Last v1 version
-
 local M = { "neovim/nvim-lspconfig", }
 
 M.dependencies = {
-  { "williamboman/mason.nvim", version = mason_version, config = true, }, --> LSP server manager
-  { "williamboman/mason-lspconfig.nvim", version = mason_lspconfig_version },
+  { "mason-org/mason.nvim", opts = {}, },      --> LSP server manager
+  { "mason-org/mason-lspconfig.nvim" },
   { "j-hui/fidget.nvim",       opts = {}, },     --> LSP status indicator
   {
     "folke/lazydev.nvim",                        --> Neovim dev environment
@@ -104,9 +101,6 @@ M.config = function()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-  -- Calls Mason
-  require("mason").setup()
-
   -- Defines a list of servers and server-specific config
   local servers = {
     bashls = {},
@@ -156,17 +150,17 @@ M.config = function()
     texlab = {},
     -- html = { filetypes = { "html", "twig", "hbs"} },
     gopls = {
-      filetypes = {"go", "gomod", "gowork", "gotmpl"},
+      filetypes = { "go", "gomod", "gowork", "gotmpl" },
       root_markers = { "go.work", "go.mod", ".git" },
       settings = {
         gopls = {
           -- Enable auto imports
-          gofumpt = true, 
+          gofumpt = true,
           usePlaceholders = true,
           completeUnimported = true,
           staticcheck = true,
           matcher = "fuzzy",
-          
+
           -- Enable documentation features
           hints = {
             assignVariableTypes = true,
@@ -177,7 +171,7 @@ M.config = function()
             parameterNames = true,
             rangeVariableTypes = true,
           },
-          
+
           analyses = {
             unusedparams = true,
             shadow = true,
@@ -185,7 +179,7 @@ M.config = function()
             unusedwrite = true,
             useany = true,
           },
-          
+
           -- Enable codelens for better documentation
           codelenses = {
             generate = true,
@@ -209,16 +203,21 @@ M.config = function()
   -- Ensure Mason-backed servers are installed.
   -- Some servers in `servers` (for example `metals`) are not provided by Mason
   -- and must still be set up explicitly below.
+  local mason_servers = {
+    "bashls",
+    "clangd",
+    "gopls",
+    "lua_ls",
+    "pyright",
+    "rust_analyzer",
+    "texlab",
+  }
+
   require("mason-lspconfig").setup({
-    ensure_installed = {
-      "bashls",
-      "clangd",
-      "gopls",
-      "lua_ls",
-      "pyright",
-      "rust_analyzer",
-      "texlab",
-    },
+    ensure_installed = mason_servers,
+    -- This config registers custom `vim.lsp.config()` entries below, and also
+    -- enables non-Mason servers such as `metals`; keep enablement explicit.
+    automatic_enable = false,
   })
 
   for server_name, server in pairs(servers) do

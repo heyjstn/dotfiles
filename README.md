@@ -5,13 +5,15 @@ This repository contains two main user-facing configurations:
 - [`.wezterm.lua`](.wezterm.lua): terminal workflow, panes, tabs, workspaces, quick-select, and project launch helpers.
 - [`nvim/`](nvim): Neovim editor, plugins, diagnostics, formatting, debugging, testing, and custom UI. This is a modified since I fork the original repository from [theovim](https://github.com/theopn/theovim) 
 
-Both are currently themed with Kanagawa.
+Both are currently themed with Gruvbox.
 
 ## Repository Layout
 
 ```text
 .
+├── .zshrc
 ├── .wezterm.lua
+├── install.sh
 └── nvim
     ├── init.lua
     ├── lazy-lock.json
@@ -23,6 +25,26 @@ Both are currently themed with Kanagawa.
     └── doc
 ```
 
+## Installation
+
+This repository targets macOS. Run the installer from the repository root:
+
+```sh
+./install.sh
+```
+
+The installer checks for Homebrew, installs the shell workflow tools `fzf`,
+`zoxide`, and `eza`, installs fonts from [`assets/`](assets), and installs the
+Libertinus font cask when it is missing.
+
+## Shell Workflow
+
+The tracked [`.zshrc`](.zshrc) wires the Homebrew tools into interactive shells:
+
+- `fzf --zsh` enables fuzzy history, file, and completion widgets.
+- `zoxide init zsh` enables frecent directory jumping through `z`.
+- `eza` backs the `ls`, `ll`, `la`, and `lt` aliases for faster directory scanning.
+
 ## WezTerm Guide
 
 ### What this WezTerm config does
@@ -32,10 +54,10 @@ The WezTerm setup is defined in [`.wezterm.lua`](.wezterm.lua). It is built arou
 Key defaults:
 
 - Shell: `zsh -l`
-- Theme: `kanagawa`
+- Theme: `Gruvbox Dark (Gogh)` in dark mode, `GruvboxLight` in light mode
 - Font fallback: JetBrains Mono Nerd Font, IosevkaTerm Nerd Font, Symbols Nerd Font Mono, Menlo
 - Window style:
-  - 95% background opacity
+  - 90% background opacity
   - macOS blur enabled
   - resize-only window decorations
   - close confirmation prompt enabled
@@ -184,7 +206,7 @@ This configuration focuses on:
 
 ### Theme
 
-Neovim uses Kanagawa Wave through [`nvim/lua/plugins/kanagawa.lua`](nvim/lua/plugins/kanagawa.lua).
+Neovim uses Gruvbox through [`nvim/lua/plugins/gruvbox.lua`](nvim/lua/plugins/gruvbox.lua).
 
 Transparency is enabled, so floating windows and editor surfaces keep a translucent look when your terminal supports it.
 
@@ -511,11 +533,17 @@ Configured in:
 
 This setup uses:
 
-- `mason.nvim` for LSP server installation
-- `mason-lspconfig.nvim` for bridging Mason and `lspconfig`
+- `mason.nvim` v2 for LSP server installation
+- `mason-lspconfig.nvim` v2 for Mason-backed server installation
 - `fidget.nvim` for LSP status feedback
 - `conform.nvim` for formatting and format-on-save
 - `nvim-lint` for on-demand and post-save linting when external linters are available
+
+Server setup is explicit: the config registers each server with
+`vim.lsp.config()`, asks Mason to install the Mason-backed servers, disables
+`mason-lspconfig` automatic enablement, and then enables the configured servers
+directly. This keeps custom server settings and non-Mason servers such as
+`metals` under the same path.
 
 Managed language servers:
 
@@ -798,6 +826,8 @@ A typical editing session in this setup looks like this:
 This config expects or benefits from the following tools:
 
 - `zsh` for WezTerm's default shell
+- Homebrew on macOS for the installer-managed tools
+- `fzf`, `zoxide`, and `eza` for the shell workflow in [`.zshrc`](.zshrc)
 - a Nerd Font for the best icon experience
 - `git` for plugin installation and Git integrations
 - `ripgrep` for Telescope grep searches
@@ -845,6 +875,7 @@ If you want to extend or change behavior later, these are the main entry points:
 This dotfiles repo now gives you:
 
 - a leader-driven WezTerm workflow with workspaces, launch helpers, quick-select, and Neovim-aware pane movement
+- Homebrew-installed `fzf`, `zoxide`, and `eza` shell workflow tools
 - a keyboard-centric Neovim setup with LSP, format-on-save, optional linting, DAP debugging, test execution, sessions, and persistent undo
 - richer editing primitives through comments, surrounds, textobjects, and better Treesitter coverage
-- a consistent Kanagawa visual theme across both terminal and editor
+- a consistent Gruvbox visual theme across both terminal and editor
