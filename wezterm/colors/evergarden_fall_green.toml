@@ -1,0 +1,34 @@
+[metadata]
+name = "Evergarden Fall Green"
+origin_url = "https://github.com/everviolet/alacritty"
+
+[colors]
+foreground = "#f8f9e8"
+background = "#232a2e"
+cursor_bg = "#cae0a7"
+cursor_border = "#cae0a7"
+cursor_fg = "#171c1f"
+selection_bg = "#3d494d"
+selection_fg = "#f8f9e8"
+
+ansi = [
+  "#232a2e",
+  "#f57f82",
+  "#cae0a7",
+  "#f5d098",
+  "#b2cfed",
+  "#f3c0e5",
+  "#addeb9",
+  "#f8f9e8",
+]
+
+brights = [
+  "#313b40",
+  "#f57f82",
+  "#cae0a7",
+  "#f5d098",
+  "#b2cfed",
+  "#f3c0e5",
+  "#addeb9",
+  "#96b4aa",
+]

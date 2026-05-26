@@ -11,6 +11,12 @@ local themes = {
     mode = "light",
     colorscheme = "melange",
   },
+  evergarden = {
+    mode = "dark",
+    colorscheme = "evergarden",
+    variant = "fall",
+    accent = "green",
+  },
   oxocarbon = {
     mode = "dark",
     colorscheme = "oxocarbon",

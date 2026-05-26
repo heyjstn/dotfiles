@@ -146,6 +146,17 @@ fi
 
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
+
+  z() {
+    case "$1" in
+      -h|--help|-V|--version)
+        command zoxide "$@"
+        ;;
+      *)
+        __zoxide_z "$@"
+        ;;
+    esac
+  }
 fi
 
 if command -v eza >/dev/null 2>&1; then
