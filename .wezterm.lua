@@ -82,22 +82,55 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_mode = "dark" -- Change to "light" to switch both WezTerm and Neovim
-local color_schemes = {
-  dark = "Gruvbox Dark (Gogh)",
-  light = "GruvboxLight",
+local theme_name = "melange" -- Change this name to switch both WezTerm and Neovim.
+local theme_names = { "melange", "melange-light", "oxocarbon", "gruvbox", "gruvbox-light", "darcula" }
+local themes = {
+  melange = {
+    mode = "dark",
+    wezterm = "Melange Dark",
+    nvim = "melange",
+  },
+  ["melange-light"] = {
+    mode = "light",
+    wezterm = "Melange Light",
+    nvim = "melange",
+  },
+  oxocarbon = {
+    mode = "dark",
+    wezterm = "Oxocarbon Dark (Gogh)",
+    nvim = "oxocarbon",
+  },
+  gruvbox = {
+    mode = "dark",
+    wezterm = "Gruvbox Dark (Gogh)",
+    nvim = "gruvbox",
+  },
+  ["gruvbox-light"] = {
+    mode = "light",
+    wezterm = "GruvboxLight",
+    nvim = "gruvbox",
+  },
+  darcula = {
+    mode = "dark",
+    wezterm = "Darcula",
+    nvim = "darcula",
+  },
 }
 
-if not color_schemes[theme_mode] then
-  error("Invalid theme_mode: " .. tostring(theme_mode) .. ". Expected 'dark' or 'light'.")
+local selected_theme = themes[theme_name]
+if not selected_theme then
+  error("Invalid theme_name: " .. tostring(theme_name) .. ". Expected one of: " .. table.concat(theme_names, ", "))
 end
+local theme_mode = selected_theme.mode
 
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
-config.color_scheme = color_schemes[theme_mode]
+config.color_scheme = selected_theme.wezterm
 config.set_environment_variables = {
+  THEME_NAME = theme_name,
   THEME_MODE = theme_mode,
+  NVIM_COLORSCHEME = selected_theme.nvim,
 }
 config.font = wezterm.font_with_fallback({
   -- { family = "Geist Mono",            weight = "Medium" },

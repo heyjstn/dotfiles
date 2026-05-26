@@ -1,8 +1,9 @@
 local is_transparent = true
+local theme = require("config.theme")
 
 return {
   "doums/darcula",
-  enabled = false,
+  enabled = theme.is_colorscheme("darcula"),
   lazy = false,
   priority = 1000,
   config = function()
