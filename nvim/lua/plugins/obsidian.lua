@@ -1,6 +1,5 @@
 return {
   "obsidian-nvim/obsidian.nvim",
-  version = "*",
   cmd = { "Obsidian" },
   event = {
     "BufReadPre " .. vim.fn.expand("~") .. "/Documents/notes/**.md",
