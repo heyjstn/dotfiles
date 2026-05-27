@@ -56,7 +56,7 @@ Telescope:
 - `<leader>s/`: Find a word in open files (using ripgrep)
 
 Treesitter:
-- `<C-Space>`: Incremental selection
+- TS highlighting and indentation start automatically for supported filetypes
 
 LSP:
 - Install new langauge server using :MasonInstall {LSP}
@@ -565,62 +565,17 @@ highlighting compared to the default regex-based highlighting.
 TS also integrates with Vim's folding and selection mechanism to provide a
 more efficient navigation and editing experience.
 
-Theovim installs the following TS servers out of the box:
+Theovim installs TS parsers for Bash, C, C++, Go, Java, JSON, LaTeX, Lua,
+Markdown, Python, Rust, TOML, Vim, YAML, and related filetypes.
 
-- Bash
-- C
-- C++
-- LaTeX
-- Lua
-- Python
+In these filetypes, Neovim TS highlighting and nvim-treesitter indentation
+will be enabled.
 
-In these filetypes, TS highlight (|nvim-treesitter-highlight-mod|), incremental
-selection (|nvim-treesitter-incremental-selection-mod|), and indentation
-(|nvim-treesitter-indentation-mod|) will be enabled.
-
-To disable TS or add other parsers, use the following frequently used commands
+To install or update parsers, use the following frequently used commands
 provided by the nvim-treesitter plugin:
 
 - :TSInstall {language} ...
 - :TSUpdate {language} ...
-- :TSDisable {module} [{language}]
-  - A list of modules can be found at |:TSModuleInfo|
-  - A list of languages can be found at |:TSInstallInfo|
-- :TSToggle {module} [{language}]
-  - A list of modules can be found at |:TSModuleInfo|
-  - A list of languages can be found at |:TSInstallInfo|
-
-The following keybindings are provided when a TS parser is enabled:
-
-char            action
-----------------------------------------------------------------------
-
-<C-space>       Start incremental selection
-<C-space>       (in visual mode) Perform node incremental selection
-<C-s>           (in visual mode) Perform scope incremental selection
-<M-space>       (in visual mode) Perform node decremental selection
-
-Incremental selection example:
-
->
-  local function treesitter-incremental-example()
-    local sysname = vim.loop.os_uname().sysname
-    if sysname == "Linux" then
-      vim.notify("You are using Linux!")
-    else
-      vim.notify("Ew")
-    end
-  end
-<
-
-- When you start node incremental selection at the "vim" keyword (<C-space>),
-  it will incrementally select:
-  - "vim" -> "vim.notify" -> "vim.notify(...)" -> if statement
-    -> function body -> function
-- When you start scope incremental selection at the "vim" keyword
-  (<C-space> to initialize then <C-s>), it will incrementally select:
-  - "vim" -> if statement -> function
-- You should try it out with the language of your choice to see how it behaves
 
 See also:
 - |nvim-treesitter|: Configuration and abstract layer for the built-in TS
@@ -678,6 +633,8 @@ LSP                                                              *theovim-lsp*
   - Lua (`lua_ls`)
   - Python (`pyright`)
   - Rust (`rust_analyzer`)
+  - TOML (`taplo`)
+  - YAML (`yamlls`)
 
 
 When LSP server(s) is active in the buffer, it will be displayed in the

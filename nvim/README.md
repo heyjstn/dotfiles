@@ -40,6 +40,7 @@ Theovim:
 - Preferably the latest Neovim
 - [NerdFonts](https://www.nerdfonts.com/font-downloads) to render glyphs
 - `make` and some C compiler to compile `telescope-fzf-native.nvim`
+- `tree-sitter-cli` and a C compiler to install Tree-sitter parsers
 - `npm`, `g++` (`gcc-c++`), and `unzip` for some LSP servers
 - `git` to update Theovim
 

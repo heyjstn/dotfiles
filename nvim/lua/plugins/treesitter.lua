@@ -7,46 +7,79 @@
 
 local M = { "nvim-treesitter/nvim-treesitter" }
 
+M.lazy = false
 M.build = ":TSUpdate"
 
-M.opts = {
-  ensure_installed = {
-    "bash",
-    "c",
-    "cpp",
-    "go",
-    "gomod",
-    "gosum",
-    "gowork",
-    "java",
-    "json",
-    "latex",
-    "lua",
-    "luadoc",
-    "markdown",
-    "markdown_inline",
-    "python",
-    "query",
-    "rust",
-    "toml",
-    "vim",
-    "vimdoc",
-    "yaml",
-  },
-  auto_install = false,
-
-  highlight = { enable = true, },
-  indent = { enable = true },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "<C-space>",
-      node_incremental = "<C-space>",
-      scope_incremental = "<C-s>",
-      node_decremental = "<M-space>",
-    },
-  },
+local parser_languages = {
+  "bash",
+  "c",
+  "cpp",
+  "go",
+  "gomod",
+  "gosum",
+  "gowork",
+  "java",
+  "json",
+  "latex",
+  "lua",
+  "luadoc",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "query",
+  "rust",
+  "toml",
+  "vim",
+  "vimdoc",
+  "yaml",
 }
 
+local treesitter_filetypes = {
+  "bash",
+  "c",
+  "cpp",
+  "go",
+  "gomod",
+  "gosum",
+  "gowork",
+  "java",
+  "json",
+  "latex",
+  "lua",
+  "luadoc",
+  "markdown",
+  "python",
+  "query",
+  "rust",
+  "sh",
+  "tex",
+  "toml",
+  "vim",
+  "vimdoc",
+  "yaml",
+}
+
+M.opts = {
+  install_dir = vim.fn.stdpath("data") .. "/site",
+}
+
+M.config = function(_, opts)
+  local treesitter = require("nvim-treesitter")
+  treesitter.setup(opts)
+
+  if #vim.api.nvim_list_uis() > 0 then
+    treesitter.install(parser_languages)
+  end
+
+  vim.api.nvim_create_autocmd("FileType", {
+    group = vim.api.nvim_create_augroup("TheovimTreesitter", { clear = true }),
+    pattern = treesitter_filetypes,
+    callback = function()
+      if pcall(vim.treesitter.start) then
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
+    end,
+  })
+end
 
 return M

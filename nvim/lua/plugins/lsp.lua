@@ -148,6 +148,7 @@ M.config = function()
       },
     },
     texlab = {},
+    taplo = {},
     -- html = { filetypes = { "html", "twig", "hbs"} },
     gopls = {
       filetypes = { "go", "gomod", "gowork", "gotmpl" },
@@ -198,6 +199,17 @@ M.config = function()
         },
       },
     },
+    yamlls = {
+      settings = {
+        yaml = {
+          completion = true,
+          format = { enable = true },
+          hover = true,
+          schemaStore = { enable = true },
+          validate = true,
+        },
+      },
+    },
   }
 
   -- Ensure Mason-backed servers are installed.
@@ -210,7 +222,9 @@ M.config = function()
     "lua_ls",
     "pyright",
     "rust_analyzer",
+    "taplo",
     "texlab",
+    "yamlls",
   }
 
   require("mason-lspconfig").setup({
@@ -218,6 +232,35 @@ M.config = function()
     -- This config registers custom `vim.lsp.config()` entries below, and also
     -- enables non-Mason servers such as `metals`; keep enablement explicit.
     automatic_enable = false,
+  })
+
+  local function ensure_mason_tools(tools)
+    local ok_platform, platform = pcall(require, "mason-core.platform")
+    if ok_platform and platform.is_headless then
+      return
+    end
+
+    local ok_registry, registry = pcall(require, "mason-registry")
+    if not ok_registry then
+      return
+    end
+
+    registry.refresh(vim.schedule_wrap(function(success)
+      if success == false then
+        return
+      end
+
+      for _, package_name in ipairs(tools) do
+        local ok_package, pkg = pcall(registry.get_package, package_name)
+        if ok_package and not pkg:is_installed() and not pkg:is_installing() then
+          pkg:install()
+        end
+      end
+    end))
+  end
+
+  ensure_mason_tools({
+    "prettier",
   })
 
   for server_name, server in pairs(servers) do
