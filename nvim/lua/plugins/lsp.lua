@@ -5,6 +5,11 @@ M.dependencies = {
   { "mason-org/mason-lspconfig.nvim" },
   { "j-hui/fidget.nvim",       opts = {}, },     --> LSP status indicator
   {
+    "cenk1cenk2/schema-companion.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {},
+  },
+  {
     "folke/lazydev.nvim",                        --> Neovim dev environment
     ft = "lua",
     opts = {
@@ -100,6 +105,11 @@ M.config = function()
   -- Gets nvim-cmp capabilities
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+
+  local schema_companion = require("schema-companion")
+  local kubernetes_schema_matcher = function()
+    return schema_companion.sources.matchers.kubernetes.setup({ version = "master" })
+  end
 
   -- Defines a list of servers and server-specific config
   local servers = {
@@ -199,17 +209,49 @@ M.config = function()
         },
       },
     },
-    yamlls = {
-      settings = {
-        yaml = {
-          completion = true,
-          format = { enable = true },
-          hover = true,
-          schemaStore = { enable = true },
-          validate = true,
+    helm_ls = schema_companion.setup_client(
+      schema_companion.adapters.helmls.setup({
+        sources = {
+          kubernetes_schema_matcher(),
         },
-      },
-    },
+      }),
+      {
+        settings = {
+          ["helm-ls"] = {
+            yamlls = {
+              path = "yaml-language-server",
+              config = {
+                completion = true,
+                hover = true,
+                schemas = {
+                  kubernetes = "templates/**",
+                },
+              },
+            },
+          },
+        },
+      }
+    ),
+    yamlls = schema_companion.setup_client(
+      schema_companion.adapters.yamlls.setup({
+        sources = {
+          kubernetes_schema_matcher(),
+          schema_companion.sources.lsp.setup(),
+          schema_companion.sources.none.setup(),
+        },
+      }),
+      {
+        settings = {
+          yaml = {
+            completion = true,
+            format = { enable = true },
+            hover = true,
+            schemaStore = { enable = true },
+            validate = true,
+          },
+        },
+      }
+    ),
   }
 
   -- Ensure Mason-backed servers are installed.
@@ -219,6 +261,7 @@ M.config = function()
     "bashls",
     "clangd",
     "gopls",
+    "helm_ls",
     "lua_ls",
     "pyright",
     "rust_analyzer",

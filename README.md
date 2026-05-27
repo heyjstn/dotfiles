@@ -536,6 +536,8 @@ This setup uses:
 - `mason.nvim` v2 for LSP server installation
 - `mason-lspconfig.nvim` v2 for Mason-backed server installation
 - `fidget.nvim` for LSP status feedback
+- `schema-companion.nvim` for YAML/Helm schema matching, including Kubernetes manifests
+- `helm-ls.nvim` for Helm chart filetype support
 - `conform.nvim` for formatting and format-on-save
 - `nvim-lint` for on-demand and post-save linting when external linters are available
 
@@ -550,11 +552,14 @@ Managed language servers:
 - `bashls`
 - `clangd`
 - `gopls`
+- `helm_ls`
 - `jdtls` (managed by `nvim-java`)
 - `lua_ls`
 - `pyright`
 - `rust_analyzer`
+- `taplo`
 - `texlab`
+- `yamlls`
 
 Diagnostics:
 

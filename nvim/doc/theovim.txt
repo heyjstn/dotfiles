@@ -629,12 +629,15 @@ LSP                                                              *theovim-lsp*
 - The following LSP servers are installed by default:
   - Bash (`bashls`)
   - C/C++ (`clangd`)
+  - Helm (`helm_ls`)
   - LaTeX (`texlab`)
   - Lua (`lua_ls`)
   - Python (`pyright`)
   - Rust (`rust_analyzer`)
   - TOML (`taplo`)
   - YAML (`yamlls`)
+  - YAML/Helm schemas are matched with `schema-companion.nvim`, including
+    Kubernetes manifests.
 
 
 When LSP server(s) is active in the buffer, it will be displayed in the
