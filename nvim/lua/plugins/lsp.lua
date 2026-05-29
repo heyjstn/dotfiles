@@ -293,10 +293,22 @@ M.config = function()
         return
       end
 
+      local function call_package_method(pkg, method)
+        if type(pkg[method]) ~= "function" then
+          return false
+        end
+
+        local ok, result = pcall(pkg[method], pkg)
+        return ok and result
+      end
+
       for _, package_name in ipairs(tools) do
         local ok_package, pkg = pcall(registry.get_package, package_name)
-        if ok_package and not pkg:is_installed() and not pkg:is_installing() then
-          pkg:install()
+        if ok_package
+            and not call_package_method(pkg, "is_installed")
+            and not call_package_method(pkg, "is_installing")
+            and type(pkg.install) == "function" then
+          pcall(pkg.install, pkg)
         end
       end
     end))
