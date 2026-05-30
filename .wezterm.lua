@@ -23,6 +23,22 @@ local function basename(s)
   return string.gsub(s, "(.*[/\\])(.*)", "%2")
 end
 
+local function trim(s)
+  return s and s:match("^%s*(.-)%s*$") or ""
+end
+
+local function truncate_title(s, max_width)
+  if max_width <= 0 or #s <= max_width then
+    return s
+  end
+
+  if max_width <= 3 then
+    return s:sub(1, max_width)
+  end
+
+  return s:sub(1, max_width - 3) .. "..."
+end
+
 local function cwd_to_path(cwd)
   if not cwd then
     return wezterm.home_dir
@@ -82,7 +98,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "evergarden" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "oxocarbon" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = { "melange", "melange-light", "evergarden", "oxocarbon", "gruvbox", "gruvbox-light", "darcula" }
 local themes = {
   melange = {
@@ -127,11 +143,72 @@ if not selected_theme then
   error("Invalid theme_name: " .. tostring(theme_name) .. ". Expected one of: " .. table.concat(theme_names, ", "))
 end
 local theme_mode = selected_theme.mode
+local tab_bar_palette = theme_mode == "light"
+    and {
+      bar_bg = "#e9dfd2",
+      inactive_bg = "#d9cec2",
+      inactive_fg = "#6f6259",
+      hover_bg = "#cbbdaf",
+      hover_fg = "#292522",
+      active_bg = "#78997a",
+      active_fg = "#fbf1e8",
+      accent = "#b85f5f",
+      alert = "#b85f5f",
+      cwd = "#4f7f65",
+      command = "#9a6a3f",
+      clock = "#5f6f95",
+      status_bg = "#d9cec2",
+      status_fg = "#403a36",
+    }
+    or {
+      bar_bg = "#171c1f",
+      inactive_bg = "#232a2e",
+      inactive_fg = "#96b4aa",
+      hover_bg = "#313b40",
+      hover_fg = "#f8f9e8",
+      active_bg = "#cae0a7",
+      active_fg = "#171c1f",
+      accent = "#f5d098",
+      alert = "#f57f82",
+      cwd = "#addeb9",
+      command = "#f5d098",
+      clock = "#b2cfed",
+      status_bg = "#232a2e",
+      status_fg = "#f8f9e8",
+    }
 
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
 config.color_scheme = selected_theme.wezterm
+config.colors = {
+  tab_bar = {
+    background = tab_bar_palette.bar_bg,
+    active_tab = {
+      bg_color = tab_bar_palette.active_bg,
+      fg_color = tab_bar_palette.active_fg,
+      intensity = "Bold",
+    },
+    inactive_tab = {
+      bg_color = tab_bar_palette.inactive_bg,
+      fg_color = tab_bar_palette.inactive_fg,
+    },
+    inactive_tab_hover = {
+      bg_color = tab_bar_palette.hover_bg,
+      fg_color = tab_bar_palette.hover_fg,
+      italic = false,
+    },
+    new_tab = {
+      bg_color = tab_bar_palette.bar_bg,
+      fg_color = tab_bar_palette.inactive_fg,
+    },
+    new_tab_hover = {
+      bg_color = tab_bar_palette.hover_bg,
+      fg_color = tab_bar_palette.hover_fg,
+      italic = false,
+    },
+  },
+}
 config.set_environment_variables = {
   THEME_NAME = theme_name,
   THEME_MODE = theme_mode,
@@ -298,8 +375,88 @@ config.key_tables = {
 -- Tab bar
 -- I don't like the look of "fancy" tab bar
 config.use_fancy_tab_bar = false
+config.show_new_tab_button_in_tab_bar = false
+config.show_close_tab_button_in_tabs = false
+config.switch_to_last_active_tab_when_closing_tab = true
+config.tab_max_width = 28
 config.status_update_interval = 1000
 config.tab_bar_at_bottom = false
+wezterm.on("format-tab-title", function(tab, _tabs, panes, _config, hover, max_width)
+  local palette = tab_bar_palette
+  local pane_count = panes and #panes or 1
+  max_width = max_width or config.tab_max_width
+  local title = trim(tab.tab_title)
+
+  if title == "" and tab.active_pane then
+    title = trim(tab.active_pane.title)
+  end
+  if title == "" then
+    title = "shell"
+  end
+
+  local is_zoomed = tab.active_pane and tab.active_pane.is_zoomed
+  local has_unseen_output = tab.has_unseen_output
+  local markers = ""
+  if is_zoomed then
+    markers = markers .. "Z "
+  end
+  if has_unseen_output then
+    markers = markers .. "! "
+  end
+
+  local pane_suffix = pane_count > 1 and (" " .. pane_count .. "p") or ""
+  local index = tostring(tab.tab_index + 1)
+  local reserved_width = #index + #markers + #pane_suffix + 5
+  local title_width = math.max(6, max_width - reserved_width)
+  title = truncate_title(title, title_width)
+
+  local bg = palette.inactive_bg
+  local fg = palette.inactive_fg
+  local index_fg = palette.accent
+  if tab.is_active then
+    bg = palette.active_bg
+    fg = palette.active_fg
+    index_fg = palette.active_fg
+  elseif hover then
+    bg = palette.hover_bg
+    fg = palette.hover_fg
+  end
+  if has_unseen_output then
+    index_fg = palette.alert
+  end
+
+  return {
+    { Background = { Color = palette.bar_bg } },
+    { Foreground = { Color = bg } },
+    { Text = " " },
+    { Background = { Color = bg } },
+    { Foreground = { Color = index_fg } },
+    { Attribute = { Intensity = "Bold" } },
+    { Text = " " .. index .. " " },
+    { Foreground = { Color = fg } },
+    { Text = markers .. title .. pane_suffix .. " " },
+    "ResetAttributes",
+    { Background = { Color = palette.bar_bg } },
+    { Text = " " },
+  }
+end)
+
+local function append_status_segment(cells, icon, label, fg)
+  if not label or label == "" then
+    return
+  end
+
+  table.insert(cells, { Background = { Color = tab_bar_palette.status_bg } })
+  table.insert(cells, { Foreground = { Color = fg } })
+  table.insert(cells, { Attribute = { Intensity = "Bold" } })
+  table.insert(cells, { Text = " " .. icon .. " " })
+  table.insert(cells, { Foreground = { Color = tab_bar_palette.status_fg } })
+  table.insert(cells, { Text = label .. " " })
+  table.insert(cells, "ResetAttributes")
+  table.insert(cells, { Background = { Color = tab_bar_palette.bar_bg } })
+  table.insert(cells, { Text = " " })
+end
+
 wezterm.on("update-status", function(window, pane)
   -- Workspace name
   local stat = window:active_workspace()
@@ -356,26 +513,24 @@ wezterm.on("update-status", function(window, pane)
   local time = wezterm.strftime("%H:%M")
 
   -- Left status (left of the tab line)
-  window:set_left_status(wezterm.format({
-    { Foreground = { Color = stat_color } },
-    { Text = "  " },
-    { Text = wezterm.nerdfonts.oct_table .. "  " .. stat },
-    { Text = " |" },
-  }))
+  local left_status = {
+    { Background = { Color = tab_bar_palette.bar_bg } },
+    { Text = " " },
+  }
+  append_status_segment(left_status, wezterm.nerdfonts.oct_table, stat, stat_color)
+  window:set_left_status(wezterm.format(left_status))
 
   -- Right status
-  window:set_right_status(wezterm.format({
-    -- Wezterm has a built-in nerd fonts
-    -- https://wezfurlong.org/wezterm/config/lua/wezterm/nerdfonts.html
-    { Text = wezterm.nerdfonts.md_folder .. "  " .. cwd },
-    { Text = " | " },
-    { Foreground = { Color = "#E6C384" } },
-    { Text = wezterm.nerdfonts.fa_code .. "  " .. cmd },
-    "ResetAttributes",
-    { Text = " | " },
-    { Text = wezterm.nerdfonts.md_clock .. "  " .. time },
-    { Text = "  " },
-  }))
+  local right_status = {
+    { Background = { Color = tab_bar_palette.bar_bg } },
+    { Text = " " },
+  }
+  -- Wezterm has built-in Nerd Font symbols:
+  -- https://wezfurlong.org/wezterm/config/lua/wezterm/nerdfonts.html
+  append_status_segment(right_status, wezterm.nerdfonts.md_folder, cwd, tab_bar_palette.cwd)
+  append_status_segment(right_status, wezterm.nerdfonts.fa_code, cmd, tab_bar_palette.command)
+  append_status_segment(right_status, wezterm.nerdfonts.md_clock, time, tab_bar_palette.clock)
+  window:set_right_status(wezterm.format(right_status))
 end)
 
 --[[ Appearance setting for when I need to take pretty screenshots
