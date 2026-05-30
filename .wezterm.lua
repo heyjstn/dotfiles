@@ -214,6 +214,7 @@ config.set_environment_variables = {
   THEME_MODE = theme_mode,
   NVIM_COLORSCHEME = selected_theme.nvim,
 }
+config.font_size = 12.5
 config.font = wezterm.font_with_fallback({
   -- { family = "SF Mono",               weight = "Medium" },
   -- { family = "Geist Mono",            weight = "Medium" },
