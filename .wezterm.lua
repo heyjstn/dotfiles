@@ -215,6 +215,7 @@ config.set_environment_variables = {
   NVIM_COLORSCHEME = selected_theme.nvim,
 }
 config.font = wezterm.font_with_fallback({
+  -- { family = "SF Mono",               weight = "Medium" },
   -- { family = "Geist Mono",            weight = "Medium" },
   { family = "Jetbrains Mono",        weight = "Medium" },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
@@ -376,7 +377,6 @@ config.key_tables = {
 -- I don't like the look of "fancy" tab bar
 config.use_fancy_tab_bar = false
 config.show_new_tab_button_in_tab_bar = false
-config.show_close_tab_button_in_tabs = false
 config.switch_to_last_active_tab_when_closing_tab = true
 config.tab_max_width = 28
 config.status_update_interval = 1000
