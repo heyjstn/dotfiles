@@ -217,7 +217,7 @@ config.set_environment_variables = {
 config.font = wezterm.font_with_fallback({
   -- { family = "SF Mono",               weight = "Medium" },
   -- { family = "Geist Mono",            weight = "Medium" },
-  { family = "Jetbrains Mono",        weight = "Medium" },
+  { family = "JetBrains Mono",        weight = "Medium" },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
   { family = "Menlo" },
