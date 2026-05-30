@@ -111,6 +111,43 @@ M.config = function()
     return schema_companion.sources.matchers.kubernetes.setup({ version = "master" })
   end
 
+  local function rust_analyzer_root_dir(bufnr, on_dir)
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    local cargo_crate_dir = vim.fs.root(fname, { "Cargo.toml" })
+
+    if not cargo_crate_dir then
+      on_dir(vim.fs.root(fname, { "rust-project.json", ".git" }))
+      return
+    end
+
+    if vim.fn.executable("cargo") == 0 then
+      on_dir(cargo_crate_dir)
+      return
+    end
+
+    local cmd = {
+      "cargo",
+      "metadata",
+      "--no-deps",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      cargo_crate_dir .. "/Cargo.toml",
+    }
+
+    vim.system(cmd, { text = true }, function(output)
+      local cargo_workspace_root
+      if output.code == 0 and output.stdout then
+        local ok, result = pcall(vim.json.decode, output.stdout)
+        if ok and type(result) == "table" and result["workspace_root"] then
+          cargo_workspace_root = vim.fs.normalize(result["workspace_root"])
+        end
+      end
+
+      on_dir(cargo_workspace_root or cargo_crate_dir)
+    end)
+  end
+
   -- Defines a list of servers and server-specific config
   local servers = {
     bashls = {},
@@ -146,6 +183,7 @@ M.config = function()
       },
     },
     rust_analyzer = {
+      root_dir = rust_analyzer_root_dir,
       settings = {
         ["rust-analyzer"] = {
           cargo = {
