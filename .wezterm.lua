@@ -517,8 +517,9 @@ wezterm.on("update-status", function(window, pane)
   local left_status = {
     { Background = { Color = tab_bar_palette.bar_bg } },
     { Text = " " },
+    { Padding = 1 },
   }
-  append_status_segment(left_status, wezterm.nerdfonts.oct_table, stat, stat_color)
+  append_status_segment(left_status, wezterm.nerdfonts.fae_planet, stat, stat_color)
   window:set_left_status(wezterm.format(left_status))
 
   -- Right status
