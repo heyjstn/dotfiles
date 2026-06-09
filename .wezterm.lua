@@ -485,15 +485,16 @@ wezterm.on("format-tab-title", function(tab, _tabs, panes, _config, hover, max_w
   }
 end)
 
-local function append_status_segment(cells, icon, label, fg)
+local function append_status_segment(cells, icon, label, fg, icon_gap)
   if not label or label == "" then
     return
   end
 
+  icon_gap = icon_gap or " "
   table.insert(cells, { Background = { Color = tab_bar_palette.status_bg } })
   table.insert(cells, { Foreground = { Color = fg } })
   table.insert(cells, { Attribute = { Intensity = "Bold" } })
-  table.insert(cells, { Text = " " .. icon .. " " })
+  table.insert(cells, { Text = " " .. icon .. icon_gap })
   table.insert(cells, { Foreground = { Color = tab_bar_palette.status_fg } })
   table.insert(cells, { Text = label .. " " })
   table.insert(cells, "ResetAttributes")
@@ -563,7 +564,7 @@ wezterm.on("update-status", function(window, pane)
     { Background = { Color = tab_bar_palette.bar_bg } },
     { Text = "  " },
   }
-  append_status_segment(left_status, stat_icon, stat, stat_color)
+  append_status_segment(left_status, stat_icon, stat, stat_color, "  ")
   window:set_left_status(wezterm.format(left_status))
 
   -- Right status
