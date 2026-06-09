@@ -167,6 +167,7 @@ The status bar updates once per second.
 
 Left status:
 
+- deterministic icon selected from the current workspace name
 - current workspace name
 - current key table name when a special mode is active
 - `LDR` when the leader key is active

@@ -55,6 +55,48 @@ local function workspace_name_from_cwd(cwd)
   return name ~= "" and name or "main"
 end
 
+local workspace_icon_names = {
+  "cod_terminal",
+  "dev_terminal",
+  "fa_code",
+  "fa_laptop",
+  "fa_wrench",
+  "fae_planet",
+  "md_briefcase",
+  "md_code_braces",
+  "md_console",
+  "md_cube",
+  "md_database",
+  "md_folder",
+  "md_folder_star",
+  "md_lightbulb",
+  "oct_repo",
+  "pl_branch",
+}
+
+local function hash_string(s)
+  local hash = 0
+  for i = 1, #s do
+    hash = (hash * 31 + s:byte(i)) % 2147483647
+  end
+  return hash
+end
+
+local function workspace_icon(name)
+  local icon_count = #workspace_icon_names
+  local start_index = (hash_string(name or "") % icon_count) + 1
+
+  for offset = 0, icon_count - 1 do
+    local icon_name = workspace_icon_names[((start_index + offset - 2) % icon_count) + 1]
+    local icon = wezterm.nerdfonts[icon_name]
+    if icon and icon ~= "" then
+      return icon
+    end
+  end
+
+  return wezterm.nerdfonts.fae_planet or "*"
+end
+
 local function is_nvim(pane)
   local user_vars = pane:get_user_vars() or {}
   if user_vars.IS_NVIM == "true" then
@@ -98,7 +140,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "oxocarbon" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "melange" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = { "melange", "melange-light", "evergarden", "oxocarbon", "gruvbox", "gruvbox-light", "darcula" }
 local themes = {
   melange = {
@@ -461,7 +503,9 @@ end
 
 wezterm.on("update-status", function(window, pane)
   -- Workspace name
-  local stat = window:active_workspace()
+  local active_workspace = window:active_workspace()
+  local stat = active_workspace
+  local stat_icon = workspace_icon(active_workspace)
   local stat_color = "#C34043"
   -- It's a little silly to have workspace name all the time
   -- Utilize this to display LDR or current key table name
@@ -519,7 +563,7 @@ wezterm.on("update-status", function(window, pane)
     { Background = { Color = tab_bar_palette.bar_bg } },
     { Text = "  " },
   }
-  append_status_segment(left_status, wezterm.nerdfonts.fae_planet, stat, stat_color)
+  append_status_segment(left_status, stat_icon, stat, stat_color)
   window:set_left_status(wezterm.format(left_status))
 
   -- Right status
