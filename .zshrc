@@ -1,146 +1,126 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-export PATH=$HOME/sdk/go1.24.0/bin:$PATH
-export PATH=$HOME/.linkerd2/bin:$PATH
-# export PATH=~/opt/homebrew/Cellar/go/1.24.1
-# export GOPATH=$HOME/go
-export PATH="/usr/local/share/dotnet:$PATH"
+# Shared zsh configuration for personal and work machines.
+
+typeset -U path PATH
+
+path_prepend() {
+  local dir i
+  for (( i = $#; i >= 1; i-- )); do
+    dir="${argv[i]}"
+    [[ -n "$dir" && -d "$dir" ]] && path=("$dir" $path)
+  done
+}
+
+path_append() {
+  local dir
+  for dir in "$@"; do
+    [[ -n "$dir" && -d "$dir" ]] && path+=("$dir")
+  done
+}
+
+if tty -s; then
+  export GPG_TTY="$(tty)"
+fi
+
+if [[ -z "${HOMEBREW_PREFIX:-}" ]]; then
+  if command -v brew >/dev/null 2>&1; then
+    export HOMEBREW_PREFIX="$(brew --prefix)"
+  elif [[ -x /opt/homebrew/bin/brew ]]; then
+    export HOMEBREW_PREFIX="$(/opt/homebrew/bin/brew --prefix)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    export HOMEBREW_PREFIX="$(/usr/local/bin/brew --prefix)"
+  fi
+fi
+
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  path_prepend "$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin"
+fi
+
+path_prepend \
+  "$HOME/.local/bin" \
+  "$HOME" \
+  "$HOME/sdk/go1.24.0/bin" \
+  "$HOME/sdk/go1.23.2/bin"
+
+if command -v go >/dev/null 2>&1; then
+  path_append "$(go env GOPATH 2>/dev/null)/bin"
+fi
+
+export KUBERNETES_CLI_PATH="${KUBERNETES_CLI_PATH:-$HOME}"
+export HELM_PATH="${HELM_PATH:-$HOME}"
+path_prepend "$KUBERNETES_CLI_PATH" "${N2C_CLI_PATH:-$HOME}" "$HELM_PATH"
+
+kubeconfigs=()
+[[ -f "$HOME/.kube/config" ]] && kubeconfigs+=("$HOME/.kube/config")
+(( ${#kubeconfigs[@]} )) && export KUBECONFIG="${(j.:.)kubeconfigs}"
+unset kubeconfigs
+
 export NVM_DIR="$HOME/.nvm"
-    [ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ] && \. "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" # This loads nvm
-    [ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
+  [[ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]] && source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+  [[ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ]] && source "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
+fi
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 
-# Path to your Oh My Zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+export BUN_INSTALL="$HOME/.bun"
+path_prepend "$BUN_INSTALL/bin"
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
-# ZSH_THEME="af-magic"
-ZSH_THEME="af-magic"
+if command -v brew >/dev/null 2>&1; then
+  sdkman_brew_prefix="$(brew --prefix sdkman-cli 2>/dev/null)"
+  if [[ -n "$sdkman_brew_prefix" && -d "$sdkman_brew_prefix/libexec" ]]; then
+    export SDKMAN_DIR="$sdkman_brew_prefix/libexec"
+  fi
+  unset sdkman_brew_prefix
+fi
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+if [[ -z "${SDKMAN_DIR:-}" && -d "${HOMEBREW_PREFIX:-}/opt/sdkman-cli/libexec" ]]; then
+  export SDKMAN_DIR="$HOMEBREW_PREFIX/opt/sdkman-cli/libexec"
+fi
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+if [[ -n "${SDKMAN_DIR:-}" ]]; then
+  [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+  [[ -d "$SDKMAN_DIR/candidates/java/current" ]] && export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+fi
 
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+if command -v oh-my-posh >/dev/null 2>&1; then
+  eval "$(oh-my-posh init zsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/refs/heads/main/themes/pure.omp.json)"
+fi
 
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+export EDITOR="nvim"
+if [[ -n "${SSH_CONNECTION:-}" ]]; then
+  export EDITOR="vim"
+fi
 
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
+if [[ -o interactive ]]; then
+  autoload -Uz edit-command-line
+  zle -N edit-command-line
+  bindkey '^z^e' edit-command-line
+fi
 
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 alias nv="nvim"
 alias k="kubectl"
 alias f="flux"
+alias python35="python3.5"
+command -v python3 >/dev/null 2>&1 && alias python="python3"
+[[ -f "$HOME/boot.sh" ]] && alias dev="bash $HOME/boot.sh"
+command -v kubecolor >/dev/null 2>&1 && alias kubectl="kubecolor"
+
+alias -s yaml="$EDITOR"
+alias -s toml="$EDITOR"
+alias -s json="$EDITOR"
+alias -s md="$EDITOR"
 
 export OBSIDIAN_ICLOUD_DIR="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents"
 export OBSIDIAN_DOCS_VAULT="$OBSIDIAN_ICLOUD_DIR/docs"
-alias oo='cd "$OBSIDIAN_DOCS_VAULT"'
+if [[ -d "$OBSIDIAN_DOCS_VAULT" ]]; then
+  alias oo='cd "$OBSIDIAN_DOCS_VAULT"'
+fi
+if [[ -d "$OBSIDIAN_ICLOUD_DIR" && ! -e "$HOME/obsidian" ]]; then
+  ln -s "$OBSIDIAN_ICLOUD_DIR" "$HOME/obsidian"
+fi
 
-# Added by Windsurf
-export PATH="$HOME/.codeium/windsurf/bin:$PATH"
-
-# Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-
-# symlink
-[ -e "$HOME/obsidian" ] || ln -s "$OBSIDIAN_ICLOUD_DIR" "$HOME/obsidian"
-
-if command -v fzf >/dev/null 2>&1; then
+if [[ -o interactive && -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
 fi
 
@@ -159,9 +139,39 @@ if command -v zoxide >/dev/null 2>&1; then
   }
 fi
 
-if command -v eza >/dev/null 2>&1; then
-  alias ls="eza --group-directories-first --icons=auto"
-  alias ll="eza -l --git --group-directories-first --icons=auto"
-  alias la="eza -la --git --group-directories-first --icons=auto"
-  alias lt="eza --tree --level=2 --group-directories-first --icons=auto"
+# if command -v eza >/dev/null 2>&1; then
+#   alias ls="eza --group-directories-first --icons=auto"
+#   alias ll="eza -l --git --group-directories-first --icons=auto"
+#   alias la="eza -la --git --group-directories-first --icons=auto"
+#   alias lt="eza --tree --level=2 --group-directories-first --icons=auto"
+# fi
+
+if [[ -o interactive ]] && command -v xan >/dev/null 2>&1; then
+  autoload -Uz bashcompinit
+  bashcompinit
+
+  _xan() {
+    xan compgen "$1" "$2" "$3"
+  }
+
+  complete -F _xan -o default xan
 fi
+
+if [[ -r "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
+fi
+
+# zsh-syntax-highlighting must be sourced after all other shell setup.
+zsh_highlight_paths=(
+  "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+  "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+)
+[[ -n "${ZSH_CUSTOM:-}" ]] && zsh_highlight_paths+=("$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh")
+
+for zsh_highlight in "${zsh_highlight_paths[@]}"; do
+  if [[ -f "$zsh_highlight" ]]; then
+    source "$zsh_highlight"
+    break
+  fi
+done
+unset zsh_highlight zsh_highlight_paths
