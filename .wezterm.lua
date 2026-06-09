@@ -256,12 +256,15 @@ config.set_environment_variables = {
   THEME_MODE = theme_mode,
   NVIM_COLORSCHEME = selected_theme.nvim,
 }
+
+local code_ligature_features = { "calt=1", "clig=1", "liga=1", "ss11=1" }
+config.font_dirs = { wezterm.home_dir .. "/Library/Fonts" }
 config.font_size = 13.5
 config.cell_width = 0.9
 config.font = wezterm.font_with_fallback({
   -- { family = "CommitMono Nerd Font",  weight = "Medium", style = "Normal" },
-  { family = "Geist Mono",            weight = "Medium" },
-  { family = "JetBrains Mono",        weight = "Medium" },
+  { family = "Geist Mono",            weight = "Medium", harfbuzz_features = code_ligature_features },
+  { family = "JetBrains Mono",        weight = "Medium", harfbuzz_features = code_ligature_features },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
   { family = "Menlo" },

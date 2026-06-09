@@ -393,6 +393,8 @@ require("ui.dashboard").setup()
 
 -- {{{ Neovide settings
 if vim.g.neovide then
+  vim.o.guifont = "Geist Mono:h14"
+
   local padding = 10
   vim.g.neovide_padding_top = padding
   vim.g.neovide_padding_bottom = padding
