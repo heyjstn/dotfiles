@@ -263,7 +263,7 @@ config.font_size = 13.5
 config.cell_width = 0.9
 config.font = wezterm.font_with_fallback({
   -- { family = "CommitMono Nerd Font",  weight = "Medium", style = "Normal" },
-  { family = "Geist Mono",            weight = "Medium", harfbuzz_features = code_ligature_features },
+  -- { family = "Geist Mono",            weight = "Medium", harfbuzz_features = code_ligature_features },
   { family = "JetBrains Mono",        weight = "Medium", harfbuzz_features = code_ligature_features },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
