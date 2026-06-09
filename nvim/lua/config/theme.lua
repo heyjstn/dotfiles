@@ -37,6 +37,19 @@ local themes = {
 
 local selected_theme = nil
 
+local function normalize_string(value)
+  if type(value) ~= "string" then
+    return nil
+  end
+
+  local normalized = value:gsub("^%s+", ""):gsub("%s+$", "")
+  if normalized == "" then
+    return nil
+  end
+
+  return normalized
+end
+
 local function normalize_mode(mode)
   if mode == "light" then
     return "light"
@@ -48,19 +61,97 @@ local function normalize_mode(mode)
 end
 
 local function normalize_theme_name(name)
-  if type(name) ~= "string" then
-    return nil
-  end
+  return normalize_string(name)
+end
 
-  local normalized = name:gsub("^%s+", ""):gsub("%s+$", "")
-  if themes[normalized] then
-    return normalized
+local function escape_pattern(value)
+  return (value:gsub("([^%w])", "%%%1"))
+end
+
+local function read_quoted_field(content, field)
+  local escaped_field = escape_pattern(field)
+
+  return content:match("%f[%w_]" .. escaped_field .. "%f[^%w_]%s*=%s*['\"]([^'\"]+)['\"]")
+end
+
+local function find_matching_table(content, open_pos)
+  local depth = 0
+  local quote = nil
+  local escaped = false
+  local i = open_pos
+
+  while i <= #content do
+    local char = content:sub(i, i)
+
+    if quote then
+      if escaped then
+        escaped = false
+      elseif char == "\\" then
+        escaped = true
+      elseif char == quote then
+        quote = nil
+      end
+    elseif content:sub(i, i + 1) == "--" then
+      local next_line = content:find("\n", i + 2, true)
+      if not next_line then
+        break
+      end
+      i = next_line
+    elseif char == "'" or char == '"' then
+      quote = char
+    elseif char == "{" then
+      depth = depth + 1
+    elseif char == "}" then
+      depth = depth - 1
+      if depth == 0 then
+        return content:sub(open_pos + 1, i - 1)
+      end
+    end
+
+    i = i + 1
   end
 
   return nil
 end
 
-local function read_theme_name_from_wezterm_config()
+local function read_theme_block(content, name)
+  local escaped_name = escape_pattern(name)
+  local patterns = {
+    "%f[%w_]" .. escaped_name .. "%f[^%w_]%s*=%s*{",
+    "%[%s*['\"]" .. escaped_name .. "['\"]%s*%]%s*=%s*{",
+  }
+
+  for _, pattern in ipairs(patterns) do
+    local _, open_pos = content:find(pattern)
+    if open_pos then
+      return find_matching_table(content, open_pos)
+    end
+  end
+
+  return nil
+end
+
+local function read_theme_from_wezterm_content(content)
+  local name = normalize_theme_name(
+    content:match("local%s+theme_name%s*=%s*['\"]([%w%-%_]+)['\"]")
+      or content:match("config%.theme_name%s*=%s*['\"]([%w%-%_]+)['\"]")
+  )
+
+  if not name then
+    return nil
+  end
+
+  local theme = { name = name }
+  local block = read_theme_block(content, name)
+  if block then
+    theme.mode = normalize_mode(read_quoted_field(block, "mode"))
+    theme.colorscheme = normalize_string(read_quoted_field(block, "nvim"))
+  end
+
+  return theme
+end
+
+local function read_theme_from_wezterm_config()
   local uv = vim.uv or vim.loop
   local config_dir = uv.fs_realpath(vim.fn.stdpath("config")) or vim.fn.stdpath("config")
   local candidates = {
@@ -72,12 +163,9 @@ local function read_theme_name_from_wezterm_config()
   for _, path in ipairs(candidates) do
     if vim.fn.filereadable(path) == 1 then
       local content = table.concat(vim.fn.readfile(path), "\n")
-      local name = content:match("local%s+theme_name%s*=%s*['\"]([%w%-%_]+)['\"]")
-        or content:match("config%.theme_name%s*=%s*['\"]([%w%-%_]+)['\"]")
-
-      name = normalize_theme_name(name)
-      if name then
-        return name
+      local theme = read_theme_from_wezterm_content(content)
+      if theme then
+        return theme
       end
     end
   end
@@ -85,17 +173,42 @@ local function read_theme_name_from_wezterm_config()
   return nil
 end
 
-local function resolve_theme()
-  local name = normalize_theme_name(vim.env.THEME_NAME)
-    or read_theme_name_from_wezterm_config()
-    or default_theme
-  local theme = vim.deepcopy(themes[name])
+local function theme_from_name(name)
+  name = normalize_theme_name(name)
+  if not name then
+    return nil
+  end
 
+  local theme = vim.deepcopy(themes[name] or {})
   theme.name = name
-  theme.mode = normalize_mode(vim.env.THEME_MODE) or theme.mode
+  theme.colorscheme = theme.colorscheme or name
+  return theme
+end
 
-  if vim.env.NVIM_COLORSCHEME and vim.env.NVIM_COLORSCHEME ~= "" then
-    theme.colorscheme = vim.env.NVIM_COLORSCHEME
+local function apply_theme_overrides(theme, overrides)
+  for key, value in pairs(overrides or {}) do
+    if value ~= nil then
+      theme[key] = value
+    end
+  end
+
+  return theme
+end
+
+local function resolve_theme()
+  local wezterm_theme = read_theme_from_wezterm_config()
+  local theme = theme_from_name(wezterm_theme and wezterm_theme.name)
+    or theme_from_name(vim.env.THEME_NAME)
+    or theme_from_name(default_theme)
+
+  apply_theme_overrides(theme, wezterm_theme)
+
+  if not (wezterm_theme and wezterm_theme.mode) then
+    theme.mode = normalize_mode(vim.env.THEME_MODE) or theme.mode
+  end
+
+  if not (wezterm_theme and wezterm_theme.colorscheme) then
+    theme.colorscheme = normalize_string(vim.env.NVIM_COLORSCHEME) or theme.colorscheme
   end
 
   return theme

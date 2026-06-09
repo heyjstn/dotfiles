@@ -214,10 +214,11 @@ config.set_environment_variables = {
   THEME_MODE = theme_mode,
   NVIM_COLORSCHEME = selected_theme.nvim,
 }
-config.font_size = 12.5
+config.font_size = 13.5
+config.cell_width = 0.9
 config.font = wezterm.font_with_fallback({
-  -- { family = "SF Mono",               weight = "Medium" },
-  -- { family = "Geist Mono",            weight = "Medium" },
+  -- { family = "CommitMono Nerd Font",  weight = "Medium", style = "Normal" },
+  { family = "Geist Mono",            weight = "Medium" },
   { family = "JetBrains Mono",        weight = "Medium" },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
@@ -516,8 +517,7 @@ wezterm.on("update-status", function(window, pane)
   -- Left status (left of the tab line)
   local left_status = {
     { Background = { Color = tab_bar_palette.bar_bg } },
-    { Text = " " },
-    { Padding = 1 },
+    { Text = "  " },
   }
   append_status_segment(left_status, wezterm.nerdfonts.fae_planet, stat, stat_color)
   window:set_left_status(wezterm.format(left_status))
