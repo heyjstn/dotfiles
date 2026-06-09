@@ -40,6 +40,16 @@ require_brew() {
   fi
 }
 
+require_command() {
+  command_name=$1
+
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    echo "$command_name was not found." >&2
+    echo "Install $command_name first, then re-run this script." >&2
+    exit 1
+  fi
+}
+
 install_brew_formula() {
   formula=$1
   require_brew
@@ -57,6 +67,35 @@ install_homebrew_tools() {
   for formula in fzf zoxide eza; do
     install_brew_formula "$formula"
   done
+}
+
+install_oh_my_zsh() {
+  if [ -d "$HOME/.oh-my-zsh" ]; then
+    echo "Oh My Zsh is already installed."
+    return
+  fi
+
+  require_command curl
+
+  echo "Installing Oh My Zsh..."
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+}
+
+install_omz_custom_plugin() {
+  plugin_name=$1
+  repo_url=$2
+  plugin_dir="$HOME/.oh-my-zsh/custom/plugins/$plugin_name"
+
+  if [ -d "$plugin_dir" ]; then
+    echo "$plugin_name is already installed."
+    return
+  fi
+
+  require_command git
+
+  mkdir -p "$HOME/.oh-my-zsh/custom/plugins"
+  echo "Installing $plugin_name for Oh My Zsh..."
+  git clone "$repo_url" "$plugin_dir"
 }
 
 install_zshrc_symlink() {
@@ -120,6 +159,8 @@ install_libertinus_font() {
 }
 
 install_zshrc_symlink
+install_oh_my_zsh
+install_omz_custom_plugin zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git
 install_homebrew_tools
 
 if [ ! -d "$ASSETS_DIR" ]; then

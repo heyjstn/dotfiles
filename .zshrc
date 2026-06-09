@@ -52,17 +52,8 @@ kubeconfigs=()
 (( ${#kubeconfigs[@]} )) && export KUBECONFIG="${(j.:.)kubeconfigs}"
 unset kubeconfigs
 
-export NVM_DIR="$HOME/.nvm"
-if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
-  [[ -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]] && source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
-  [[ -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ]] && source "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
-fi
-[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
-[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
-
 export BUN_INSTALL="$HOME/.bun"
 path_prepend "$BUN_INSTALL/bin"
-[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
 if command -v brew >/dev/null 2>&1; then
   sdkman_brew_prefix="$(brew --prefix sdkman-cli 2>/dev/null)"
@@ -79,6 +70,33 @@ fi
 if [[ -n "${SDKMAN_DIR:-}" ]]; then
   [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
   [[ -d "$SDKMAN_DIR/candidates/java/current" ]] && export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+fi
+
+export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+ZSH_THEME=""
+
+zstyle ':omz:plugins:eza' dirs-first yes
+zstyle ':omz:plugins:eza' git-status yes
+
+plugins=(
+  git
+  brew
+  colored-man-pages
+  fzf
+  zoxide
+  eza
+  kubectl
+  helm
+  fluxcd
+  bun
+  golang
+  nvm
+  sdk
+  zsh-syntax-highlighting
+)
+
+if [[ -s "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
 fi
 
 if command -v oh-my-posh >/dev/null 2>&1; then
@@ -118,29 +136,7 @@ if [[ -d "$OBSIDIAN_ICLOUD_DIR" && ! -e "$HOME/obsidian" ]]; then
   ln -s "$OBSIDIAN_ICLOUD_DIR" "$HOME/obsidian"
 fi
 
-if [[ -o interactive && -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
-fi
-
-if command -v zoxide >/dev/null 2>&1; then
-  eval "$(zoxide init zsh)"
-
-  z() {
-    case "$1" in
-      -h|--help|-V|--version)
-        command zoxide "$@"
-        ;;
-      *)
-        __zoxide_z "$@"
-        ;;
-    esac
-  }
-fi
-
 if command -v eza >/dev/null 2>&1; then
-  alias ls="eza --group-directories-first"
-  alias ll="eza -l --git --group-directories-first"
-  alias la="eza -la --git --group-directories-first"
   alias lt="eza --tree --level=2 --group-directories-first"
 fi
 
@@ -158,18 +154,3 @@ fi
 if [[ -r "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
-
-# zsh-syntax-highlighting must be sourced after all other shell setup.
-zsh_highlight_paths=(
-  "${HOMEBREW_PREFIX:-}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-  "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-)
-[[ -n "${ZSH_CUSTOM:-}" ]] && zsh_highlight_paths+=("$ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh")
-
-for zsh_highlight in "${zsh_highlight_paths[@]}"; do
-  if [[ -f "$zsh_highlight" ]]; then
-    source "$zsh_highlight"
-    break
-  fi
-done
-unset zsh_highlight zsh_highlight_paths
