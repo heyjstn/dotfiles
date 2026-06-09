@@ -33,9 +33,10 @@ This repository targets macOS. Run the installer from the repository root:
 ./install.sh
 ```
 
-The installer checks for Homebrew, installs the shell workflow tools `fzf`,
-`zoxide`, and `eza`, installs fonts from [`assets/`](assets), and installs the
-Libertinus font cask when it is missing.
+The installer links `~/.zshrc` to the tracked [`.zshrc`](.zshrc), backing up an
+existing `~/.zshrc` first. It also checks for Homebrew, installs the shell
+workflow tools `fzf`, `zoxide`, and `eza`, installs fonts from
+[`assets/`](assets), and installs the Libertinus font cask when it is missing.
 
 ## Shell Workflow
 

@@ -59,6 +59,37 @@ install_homebrew_tools() {
   done
 }
 
+install_zshrc_symlink() {
+  zshrc_source="$SCRIPT_DIR/.zshrc"
+  zshrc_target="$HOME/.zshrc"
+
+  if [ ! -f "$zshrc_source" ]; then
+    echo "Missing zsh config: $zshrc_source" >&2
+    exit 1
+  fi
+
+  if [ -L "$zshrc_target" ] && [ "$(readlink "$zshrc_target")" = "$zshrc_source" ]; then
+    echo "$zshrc_target already points to $zshrc_source."
+    return
+  fi
+
+  if [ -e "$zshrc_target" ] || [ -L "$zshrc_target" ]; then
+    backup="$HOME/.zshrc.backup.$(date +%Y%m%d%H%M%S)"
+    suffix=1
+
+    while [ -e "$backup" ] || [ -L "$backup" ]; do
+      backup="$HOME/.zshrc.backup.$(date +%Y%m%d%H%M%S).$suffix"
+      suffix=$((suffix + 1))
+    done
+
+    mv "$zshrc_target" "$backup"
+    echo "Backed up existing $zshrc_target to $backup."
+  fi
+
+  ln -s "$zshrc_source" "$zshrc_target"
+  echo "Linked $zshrc_target -> $zshrc_source."
+}
+
 has_libertinus_font() {
   for dir in \
     "$HOME/Library/Fonts" \
@@ -88,6 +119,7 @@ install_libertinus_font() {
   "$BREW_BIN" install --cask font-libertinus
 }
 
+install_zshrc_symlink
 install_homebrew_tools
 
 if [ ! -d "$ASSETS_DIR" ]; then
