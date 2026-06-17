@@ -33,6 +33,21 @@ local themes = {
     mode = "dark",
     colorscheme = "darcula",
   },
+  kanagawa = {
+    mode = "dark",
+    colorscheme = "kanagawa",
+    variant = "wave",
+  },
+  ["kanagawa-dragon"] = {
+    mode = "dark",
+    colorscheme = "kanagawa",
+    variant = "dragon",
+  },
+  ["kanagawa-lotus"] = {
+    mode = "light",
+    colorscheme = "kanagawa",
+    variant = "lotus",
+  },
 }
 
 local selected_theme = nil
@@ -146,6 +161,7 @@ local function read_theme_from_wezterm_content(content)
   if block then
     theme.mode = normalize_mode(read_quoted_field(block, "mode"))
     theme.colorscheme = normalize_string(read_quoted_field(block, "nvim"))
+    theme.variant = normalize_string(read_quoted_field(block, "variant"))
   end
 
   return theme
@@ -209,6 +225,10 @@ local function resolve_theme()
 
   if not (wezterm_theme and wezterm_theme.colorscheme) then
     theme.colorscheme = normalize_string(vim.env.NVIM_COLORSCHEME) or theme.colorscheme
+  end
+
+  if not (wezterm_theme and wezterm_theme.variant) then
+    theme.variant = normalize_string(vim.env.THEME_VARIANT) or theme.variant
   end
 
   return theme

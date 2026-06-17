@@ -140,8 +140,19 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "oxocarbon" -- Change this name to switch both WezTerm and Neovim.
-local theme_names = { "melange", "melange-light", "evergarden", "oxocarbon", "gruvbox", "gruvbox-light", "darcula" }
+local theme_name = "kanagawa" -- Change this name to switch both WezTerm and Neovim.
+local theme_names = {
+  "melange",
+  "melange-light",
+  "evergarden",
+  "oxocarbon",
+  "gruvbox",
+  "gruvbox-light",
+  "darcula",
+  "kanagawa",
+  "kanagawa-dragon",
+  "kanagawa-lotus",
+}
 local themes = {
   melange = {
     mode = "dark",
@@ -177,6 +188,24 @@ local themes = {
     mode = "dark",
     wezterm = "Darcula",
     nvim = "darcula",
+  },
+  kanagawa = {
+    mode = "dark",
+    wezterm = "Kanagawa Wave",
+    nvim = "kanagawa",
+    variant = "wave",
+  },
+  ["kanagawa-dragon"] = {
+    mode = "dark",
+    wezterm = "Kanagawa Dragon",
+    nvim = "kanagawa",
+    variant = "dragon",
+  },
+  ["kanagawa-lotus"] = {
+    mode = "light",
+    wezterm = "Kanagawa Lotus",
+    nvim = "kanagawa",
+    variant = "lotus",
   },
 }
 
@@ -222,6 +251,7 @@ local tab_bar_palette = theme_mode == "light"
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
+wezterm.plugin.require("https://github.com/sravioli/kanagawa.wz").register(config)
 config.color_scheme = selected_theme.wezterm
 config.colors = {
   tab_bar = {
@@ -254,6 +284,7 @@ config.colors = {
 config.set_environment_variables = {
   THEME_NAME = theme_name,
   THEME_MODE = theme_mode,
+  THEME_VARIANT = selected_theme.variant or "",
   NVIM_COLORSCHEME = selected_theme.nvim,
 }
 
