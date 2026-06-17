@@ -28,10 +28,11 @@ The Neovim config started from [theovim](https://github.com/theopn/theovim) and 
 Run from the repo root:
 
 ```sh
+brew bundle --file Brewfile
 ./install.sh
 ```
 
-The installer links `~/.zshrc` to [`.zshrc`](.zshrc), backs up an existing `~/.zshrc`, checks for Homebrew, installs `fzf`, `zoxide`, `eza`, installs fonts from [`assets/`](assets), and installs the Libertinus font cask when missing.
+The [Brewfile](Brewfile) installs the Homebrew-managed CLI tools, apps, and fonts. The installer links `~/.zshrc` to [`.zshrc`](.zshrc), backs up an existing `~/.zshrc`, installs Oh My Zsh helpers, installs fonts from [`assets/`](assets), and keeps a few shell-tool/font checks for direct installer usage.
 
 ## Shell
 
@@ -133,27 +134,17 @@ Suggested flow: open a project with `nvim .`, restore with `<leader>wl`, browse 
 
 ## Dependencies
 
-Required or recommended:
+Homebrew dependencies are managed in [Brewfile](Brewfile). Run:
 
-- macOS, Homebrew, `zsh`
-- WezTerm and Neovim 0.11+
-- `git`, `ripgrep`, `make`, a C compiler, and a Nerd Font
-- `fzf`, `zoxide`, `eza`
-- `wezterm` CLI on `PATH` for best Neovim/WezTerm pane handoff
-- `pngpaste` for `:Obsidian paste_img`
-- `python3`, `gcc`, `g++` for filetype run commands
-- Skim for VimTeX PDF viewing on macOS
-
-Optional formatters/linters:
-
-```text
-stylua, clang-format, gofumpt, goimports, google-java-format,
-ruff, shfmt, shellcheck, luacheck, markdownlint, prettier,
-taplo, latexindent, rustfmt
+```sh
+brew bundle --file Brewfile
 ```
 
 Notes:
 
+- Run `xcode-select --install` before `brew bundle` on a new Mac.
+- After installing `rustup-init`, run `rustup default stable` and `rustup component add rustfmt` if you use Rust formatting.
+- Go formatters that are usually installed outside Homebrew: `go install mvdan.cc/gofumpt@latest` and `go install golang.org/x/tools/cmd/goimports@latest`.
 - Treesitter downloads newly added parsers on first start after updates.
 - `nvim-java` installs jdtls, the Java debug adapter, and test bundles through Mason on first use.
 
