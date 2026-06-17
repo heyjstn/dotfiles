@@ -33,6 +33,31 @@ local themes = {
     mode = "dark",
     colorscheme = "darcula",
   },
+  tokyonight = {
+    mode = "dark",
+    colorscheme = "tokyonight",
+    variant = "night",
+  },
+  ["tokyonight-night"] = {
+    mode = "dark",
+    colorscheme = "tokyonight",
+    variant = "night",
+  },
+  ["tokyonight-storm"] = {
+    mode = "dark",
+    colorscheme = "tokyonight",
+    variant = "storm",
+  },
+  ["tokyonight-moon"] = {
+    mode = "dark",
+    colorscheme = "tokyonight",
+    variant = "moon",
+  },
+  ["tokyonight-day"] = {
+    mode = "light",
+    colorscheme = "tokyonight",
+    variant = "day",
+  },
   kanagawa = {
     mode = "dark",
     colorscheme = "kanagawa",

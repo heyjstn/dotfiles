@@ -140,7 +140,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "kanagawa" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "tokyonight" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = {
   "melange",
   "melange-light",
@@ -149,6 +149,11 @@ local theme_names = {
   "gruvbox",
   "gruvbox-light",
   "darcula",
+  "tokyonight",
+  "tokyonight-night",
+  "tokyonight-storm",
+  "tokyonight-moon",
+  "tokyonight-day",
   "kanagawa",
   "kanagawa-dragon",
   "kanagawa-lotus",
@@ -188,6 +193,36 @@ local themes = {
     mode = "dark",
     wezterm = "Darcula",
     nvim = "darcula",
+  },
+  tokyonight = {
+    mode = "dark",
+    wezterm = "Tokyo Night",
+    nvim = "tokyonight",
+    variant = "night",
+  },
+  ["tokyonight-night"] = {
+    mode = "dark",
+    wezterm = "Tokyo Night",
+    nvim = "tokyonight",
+    variant = "night",
+  },
+  ["tokyonight-storm"] = {
+    mode = "dark",
+    wezterm = "Tokyo Night Storm",
+    nvim = "tokyonight",
+    variant = "storm",
+  },
+  ["tokyonight-moon"] = {
+    mode = "dark",
+    wezterm = "Tokyo Night Moon",
+    nvim = "tokyonight",
+    variant = "moon",
+  },
+  ["tokyonight-day"] = {
+    mode = "light",
+    wezterm = "Tokyo Night Day",
+    nvim = "tokyonight",
+    variant = "day",
   },
   kanagawa = {
     mode = "dark",
