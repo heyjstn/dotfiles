@@ -32,7 +32,7 @@ brew bundle --file Brewfile
 ./install.sh
 ```
 
-The [Brewfile](Brewfile) installs the Homebrew-managed CLI tools, apps, and fonts. The installer links `~/.zshrc` to [`.zshrc`](.zshrc), backs up an existing `~/.zshrc`, installs Oh My Zsh helpers, installs fonts from [`assets/`](assets), and keeps a few shell-tool/font checks for direct installer usage.
+The [Brewfile](Brewfile) installs the Homebrew-managed CLI tools, apps, and fonts. The installer links `~/.zshrc` to [`.zshrc`](.zshrc), backs up an existing `~/.zshrc`, installs Oh My Zsh helpers, and keeps a few shell-tool/font checks for direct installer usage.
 
 ## Shell
 
