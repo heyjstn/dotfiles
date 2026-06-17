@@ -358,7 +358,7 @@ char            action
 :Neotree        Open Neo-tree with the filesystem source.
 :Neotree toggle Toggle the current Neo-tree window.
 `nvim`          Open the dashboard.
-`nvim .`        Change local cwd to the directory and open the dashboard.
+`nvim <dir>`    Change cwd to the directory and open the dashboard.
 
 When migrating from netrw to Neo-tree, the relevant upstream behavior is:
 - Add the `nvim-neo-tree/neo-tree.nvim` plugin with `plenary.nvim`,

@@ -108,7 +108,23 @@ if [[ -o interactive ]]; then
   bindkey '^z^e' edit-command-line
 fi
 
-alias nv="nvim"
+nv() {
+  local -a args=()
+  local arg local_path
+
+  for arg in "$@"; do
+    if [[ "$arg" == /* && "$arg" != "/" ]]; then
+      local_path="${PWD:A}/${arg#/}"
+      if [[ -e "$local_path" ]]; then
+        args+=("$local_path")
+        continue
+      fi
+    fi
+    args+=("$arg")
+  done
+
+  command nvim "${args[@]}"
+}
 alias k="kubectl"
 alias f="flux"
 alias python35="python3.5"

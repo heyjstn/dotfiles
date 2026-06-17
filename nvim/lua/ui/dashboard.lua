@@ -103,7 +103,7 @@ local render = function()
     end
   end
 
-  -- Only open the dashboard for an empty startup buffer or for `nvim .`
+  -- Only open the dashboard for an empty startup buffer or for `nvim <dir>`
   if buf_name ~= "" and startup_dir == nil then
     return
   end
@@ -115,7 +115,7 @@ local render = function()
   end
 
   if startup_dir ~= nil then
-    vim.cmd("silent! lcd " .. vim.fn.fnameescape(startup_dir))
+    vim.api.nvim_set_current_dir(startup_dir)
   end
 
   -- The default empty buffer will go away when the new Dashboard buffer replaces it
