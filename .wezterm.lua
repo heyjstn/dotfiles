@@ -140,7 +140,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "kanagawa" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "kanagawa-dragon" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = {
   "melange",
   "melange-light",
@@ -463,12 +463,17 @@ wezterm.on("format-tab-title", function(tab, _tabs, panes, _config, hover, max_w
   local palette = tab_bar_palette
   local pane_count = panes and #panes or 1
   max_width = max_width or config.tab_max_width
-  local title = trim(tab.tab_title)
+  local custom_title = trim(tab.tab_title)
+  local pane_title = tab.active_pane and trim(tab.active_pane.title) or ""
+  local title = ""
 
-  if title == "" and tab.active_pane then
-    title = trim(tab.active_pane.title)
-  end
-  if title == "" then
+  if custom_title ~= "" and pane_title ~= "" and custom_title ~= pane_title then
+    title = custom_title .. " · " .. pane_title
+  elseif custom_title ~= "" then
+    title = custom_title
+  elseif pane_title ~= "" then
+    title = pane_title
+  else
     title = "shell"
   end
 
