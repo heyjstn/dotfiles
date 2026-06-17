@@ -6,7 +6,7 @@ Concise manual for these macOS dotfiles.
 
 - [`.zshrc`](.zshrc): shell aliases plus `fzf`, `zoxide`, and `eza` setup.
 - [`.wezterm.lua`](.wezterm.lua): WezTerm panes, tabs, workspaces, launcher, quick-select, and Neovim pane handoff.
-- [`nvim/`](nvim): Neovim setup for LSP, Telescope, Neo-tree, Obsidian notes, formatting, linting, debugging, tests, sessions, and custom UI.
+- [`nvim/`](nvim): Neovim setup for LSP, Telescope, Neo-tree, formatting, linting, debugging, tests, sessions, and custom UI.
 
 The Neovim config started from [theovim](https://github.com/theopn/theovim) and is now customized. WezTerm and Neovim both use Gruvbox.
 
@@ -77,7 +77,7 @@ Main features:
 
 - `lazy.nvim`, Gruvbox transparency, custom dashboard/statusline/tabline
 - Mason-backed LSP servers, format-on-save, optional linting
-- Telescope search, Neo-tree file explorer, Obsidian Markdown workflow
+- Telescope search and Neo-tree file explorer
 - DAP debugging, terminal-based tests, persistent undo, session restore
 
 Core behavior:
@@ -100,7 +100,6 @@ Core behavior:
 - Telescope: `<leader>sf` files, `<leader>sg` live grep, `<leader>/` current buffer, `<leader><leader>` buffers, `<leader>s.` recent files, `<leader>sr` resume, `<leader>sn` Neovim config, `<leader>fb` file browser.
 - More Telescope: `<leader>sh` help, `<leader>sk` keymaps, `<leader>ss` pickers, `<leader>sw` current word, `<leader>sd` diagnostics, `<leader>s/` grep open files.
 - Git: `<leader>gf/gc/gs` Git files/commits/status, `<leader>gg` Neogit, `<leader>gl` log graph, `<leader>gb/gB` full/inline blame, `<leader>gp` hunk preview, `<leader>gd` buffer diff, `<leader>go/gq` open/close Diffview, `<leader>gh/gH` file/repo history, `]h/[h` next/previous hunk.
-- Obsidian: `<leader>oo` quick switch, `<leader>on` new note, `<leader>os` search vault, `<leader>ot` today note, `<leader>ob` backlinks, `:Obsidian` subcommands, `:checkhealth obsidian` setup check. Default vault: `~/Documents/notes`.
 - Diagnostics/LSP: `[d/]d` previous/next diagnostic, `<leader>e` diagnostic float, `<leader>q` location list, `gd/gr/gI/gD` definition/references/implementation/declaration, `<leader>D` type definition, `<leader>ds/ws` symbols, `<leader>rn` rename, `<leader>ca` code action, `<leader>th` inlay hints.
 - Formatting/linting: `<leader>F` or `<leader>cf` format buffer, `<leader>cl` lint current buffer.
 - Debugging: `<leader>db` breakpoint, `<leader>dB` conditional breakpoint, `<leader>dc` continue/start, `<leader>di/do/dO` step into/over/out, `<leader>dr` REPL, `<leader>dt` terminate, `<leader>du` UI, `<leader>dl` last config, `<leader>dn/dN` nearest/last Go test.
