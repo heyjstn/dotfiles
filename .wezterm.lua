@@ -286,7 +286,6 @@ local tab_bar_palette = theme_mode == "light"
 config.default_prog = { zsh_path, "-l" }
 
 config.color_scheme_dirs = { wezterm.home_dir .. "/dotfiles/wezterm/colors" }
-wezterm.plugin.require("https://github.com/sravioli/kanagawa.wz").register(config)
 config.color_scheme = selected_theme.wezterm
 config.colors = {
   tab_bar = {
