@@ -140,7 +140,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "melange-light" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "tokyonight-night" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = {
   "melange",
   "melange-light",
@@ -324,8 +324,8 @@ config.set_environment_variables = {
 
 local code_ligature_features = { "calt=1", "clig=1", "liga=1", "ss11=1" }
 config.font_dirs = { wezterm.home_dir .. "/Library/Fonts" }
-config.font_size = 13.5
-config.cell_width = 0.9
+config.font_size = 16.5
+config.cell_width = 0.85
 config.font = wezterm.font_with_fallback({
   -- { family = "CommitMono Nerd Font",  weight = "Medium", style = "Normal" },
   -- { family = "Geist Mono",            weight = "Medium", harfbuzz_features = code_ligature_features },
