@@ -1,4 +1,3 @@
-local is_transparent = true
 local theme = require("config.theme")
 
 return {
@@ -9,6 +8,7 @@ return {
   priority = 1000,
   config = function()
     local selected_theme = theme.get()
+    local is_transparent = theme.is_transparent()
 
     vim.o.background = selected_theme.mode
     require("evergarden").setup({

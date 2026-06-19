@@ -1,4 +1,3 @@
-local is_transparent = true
 local theme = require("config.theme")
 
 local variants = {
@@ -19,6 +18,7 @@ return {
   config = function()
     local selected_theme = theme.get()
     local variant = selected_theme.variant or fallback_variant(selected_theme.mode)
+    local is_transparent = theme.is_transparent()
 
     if not variants[variant] then
       variant = fallback_variant(selected_theme.mode)

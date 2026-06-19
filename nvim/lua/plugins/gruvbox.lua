@@ -1,4 +1,3 @@
-local is_transparent = true
 local theme = require("config.theme")
 
 return {
@@ -9,7 +8,7 @@ return {
   config = function()
     vim.o.background = theme.mode()
     require("gruvbox").setup({
-      transparent_mode = is_transparent,
+      transparent_mode = theme.is_transparent(),
     })
     vim.cmd.colorscheme("gruvbox")
   end,

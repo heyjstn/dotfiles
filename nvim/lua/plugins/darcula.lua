@@ -1,4 +1,3 @@
-local is_transparent = true
 local theme = require("config.theme")
 
 return {
@@ -8,7 +7,7 @@ return {
   priority = 1000,
   config = function()
     local function apply_transparency()
-      if not is_transparent then
+      if not theme.is_transparent() then
         return
       end
 

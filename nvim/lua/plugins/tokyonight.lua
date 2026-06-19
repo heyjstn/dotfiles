@@ -1,4 +1,3 @@
-local is_transparent = true
 local theme = require("config.theme")
 
 local styles = {
@@ -20,6 +19,7 @@ return {
   config = function()
     local selected_theme = theme.get()
     local style = selected_theme.variant or fallback_style(selected_theme.mode)
+    local is_transparent = theme.is_transparent()
 
     if not styles[style] then
       style = fallback_style(selected_theme.mode)
@@ -32,8 +32,8 @@ return {
       transparent = is_transparent,
       terminal_colors = true,
       styles = {
-        sidebars = is_transparent and "transparent" or "dark",
-        floats = is_transparent and "transparent" or "dark",
+        sidebars = is_transparent and "transparent" or "normal",
+        floats = is_transparent and "transparent" or "normal",
       },
     })
 

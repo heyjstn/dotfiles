@@ -287,4 +287,14 @@ function M.is_colorscheme(colorscheme)
   return M.colorscheme() == colorscheme
 end
 
+function M.is_transparent()
+  local theme = M.get()
+
+  if theme.transparent ~= nil then
+    return theme.transparent
+  end
+
+  return theme.mode ~= "light"
+end
+
 return M
