@@ -65,6 +65,10 @@ if [[ -s "${SDKMAN_DIR:-}/bin/sdkman-init.sh" ]]; then
   [[ -d "$SDKMAN_DIR/candidates/java/current" ]] && export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
 fi
 
+if [[ -s "$HOME/.cargo" ]]; then
+  source "$HOME/.cargo/env"
+fi
+
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 ZSH_THEME=""
 
