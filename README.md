@@ -1,8 +1,14 @@
-# Dotfiles Guide
+<div align="center">
+
+### `dotfiles`
+
+If this doesn't power my workflows, what does?
+
+</div>
+
+### Overview
 
 Concise manual for these macOS dotfiles.
-
-## What Is Included
 
 - [`.zshrc`](.zshrc): shell aliases plus `fzf`, `zoxide`, and `eza` setup.
 - [`.wezterm.lua`](.wezterm.lua): WezTerm panes, tabs, workspaces, launcher, quick-select, and Neovim pane handoff.
@@ -23,7 +29,7 @@ The Neovim config started from [theovim](https://github.com/theopn/theovim) and 
     └── doc
 ```
 
-## Install
+### Install
 
 Run from the repo root:
 
@@ -34,7 +40,7 @@ brew bundle --file Brewfile
 
 The [Brewfile](Brewfile) installs the Homebrew-managed CLI tools, apps, and fonts. The installer links `~/.zshrc` to [`.zshrc`](.zshrc), backs up an existing `~/.zshrc`, installs Oh My Zsh helpers, and keeps a few shell-tool/font checks for direct installer usage.
 
-## Shell
+### Shell
 
 [`.zshrc`](.zshrc) enables:
 
@@ -42,7 +48,7 @@ The [Brewfile](Brewfile) installs the Homebrew-managed CLI tools, apps, and font
 - `zoxide` through `z` for frecent directory jumping
 - `eza` aliases: `ls`, `ll`, `la`, `lt`
 
-## WezTerm
+### WezTerm
 
 Defaults:
 
@@ -70,7 +76,7 @@ Launch menu entries include `Home`, `Dotfiles`, and `Neovim Config`.
 
 Suggested flow: open WezTerm, jump with `Ctrl+a w`, create a project workspace with `Ctrl+a p`, split with `Ctrl+a s/v`, and move between terminal panes and Neovim with `Alt+h/j/k/l`.
 
-## Neovim
+### Neovim
 
 Entry point: [`nvim/init.lua`](nvim/init.lua). Plugins are in [`nvim/lua/plugins`](nvim/lua/plugins); custom UI modules are in [`nvim/lua/ui`](nvim/lua/ui).
 
@@ -89,7 +95,7 @@ Core behavior:
 - `Esc` clears search highlighting
 - `j/k`, `n/N`, and `Ctrl+d/u` keep movement centered/ergonomic
 
-### Neovim Cheatsheet
+#### Neovim Cheatsheet
 
 - General: `Esc` clears search, `Esc Esc` leaves terminal mode, `Ctrl+s` fixes nearest spelling suggestion in insert mode.
 - Clipboard/selection: `<leader>a` select all, `<leader>y` yank visual selection to system clipboard, `<leader>p` shows registers in normal mode or replaces visual selection without overwriting the unnamed register.
@@ -109,7 +115,7 @@ Core behavior:
 - Editing helpers: `gc` comments, `sa/sd/sr/sf/sF/sh/sn` surrounds, `a/i` textobjects from `mini.ai`, autopairs, colorizer, TODO jumps with `]t/[t`.
 - Treesitter selection: `Ctrl+Space` start/expand, `Ctrl+s` expand scope, `Alt+Space` shrink.
 
-### Language Support
+#### Language Support
 
 - Managed LSP servers: `bashls`, `clangd`, `gopls`, `helm_ls`, `jdtls`, `lua_ls`, `pyright`, `rust_analyzer`, `taplo`, `texlab`, `yamlls`.
 - Configured linters: `shellcheck`, `ruff`, `luacheck`, `markdownlint`.
@@ -132,7 +138,7 @@ Useful Java commands:
 
 Suggested flow: open a project with `nvim .`, restore with `<leader>wl`, browse with `<leader>n` or search with `<leader>sf/<leader>sg`, use LSP actions, save for format-on-save, run `<leader>cl` when needed, test with `<leader>tn/<leader>tf`, debug with `<leader>dc`, and move across terminal/editor panes with `Alt+h/j/k/l`.
 
-## Dependencies
+### Dependencies
 
 Homebrew dependencies are managed in [Brewfile](Brewfile). Run:
 
@@ -148,7 +154,7 @@ Notes:
 - Treesitter downloads newly added parsers on first start after updates.
 - `nvim-java` installs jdtls, the Java debug adapter, and test bundles through Mason on first use.
 
-## Customize
+### Customize
 
 Main files to edit:
 
