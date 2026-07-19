@@ -20,6 +20,7 @@ brew "git-delta"
 brew "ripgrep"
 brew "fd"
 brew "tree-sitter"
+brew "tmux"
 
 # Language runtimes and build tools used by Neovim plugins, Mason, and ftplugins.
 brew "node"
