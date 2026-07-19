@@ -93,10 +93,12 @@ M.config = function()
         })
       end
 
-      -- Creates a keybinding to toggle inlay hints, as hints can displace some of the code
+      -- Enable inlay hints by default and create a keybinding to toggle them,
+      -- as hints can displace some of the code
       if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+        vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
         map("<leader>th", function()
-          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
+          vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }), { bufnr = event.buf })
         end, "[T]oggle Inlay [H]ints")
       end
     end,

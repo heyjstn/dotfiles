@@ -140,7 +140,7 @@ local config = {}
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-local theme_name = "tokyonight" -- Change this name to switch both WezTerm and Neovim.
+local theme_name = "melange" -- Change this name to switch both WezTerm and Neovim.
 local theme_names = {
   "melange",
   "melange-light",
@@ -324,16 +324,37 @@ config.set_environment_variables = {
 
 local code_ligature_features = { "calt=1", "clig=1", "liga=1", "ss11=1" }
 config.font_dirs = { wezterm.home_dir .. "/Library/Fonts" }
-config.font_size = 15
+config.font_size = 16
 config.cell_width = 0.85
 config.font = wezterm.font_with_fallback({
-  -- { family = "CommitMono Nerd Font",  weight = "Medium", style = "Normal" },
+  -- { family = "Monaco",                weight = "Medium", style = "Normal" },
+  -- { family = "Liga SFMono Nerd Font", weight = "Medium", style = "Normal" },
   -- { family = "Geist Mono",            weight = "Medium", harfbuzz_features = code_ligature_features },
   { family = "JetBrains Mono",        weight = "Medium", harfbuzz_features = code_ligature_features },
   { family = "IosevkaTerm Nerd Font", weight = "Medium" },
   { family = "Symbols Nerd Font Mono" },
   { family = "Menlo" },
 })
+
+config.background = {
+  {
+    source = {
+      File = wezterm.config_dir .. "assets/fletschhorn.jpg"
+    },
+    width = "Cover",
+    height = "Cover",
+
+    -- Opacity of only this image layer
+    opacity = 0.35,
+
+    -- Optional: darken image for readability
+    hsb = {
+      brightness = 0.35,
+      hue = 1.0,
+      saturation = 1.0,
+    }
+  }
+}
 
 local opacity = 0.90
 local is_macos = wezterm.target_triple:find("apple") ~= nil

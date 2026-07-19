@@ -12,3 +12,6 @@
 [merge]
 	conflictStyle = zdiff3
 
+[user]
+	name = Minh Tri (Justin)
+	email = me@heyjstn.dev
